@@ -1,4 +1,4 @@
 @echo off
-title CLIENT CONNECTION
-python client.py
+title RTU-NETWORK
+python rtu-network.py
 pause
