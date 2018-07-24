@@ -1,0 +1,49 @@
+sock_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock_server = sock_client
+ip = '0.0.0.0'
+port = 2000
+
+def handler(conn, addr):
+    global connections
+    while True:
+        data = conn.recv(1024)
+        for node in connections:
+            node.send(bytes(data))
+        if not data:
+            print(addr[0]+":"+str(addr[1])+" disconnected.")
+            connections.remove(conn)
+            conn.close()
+            break
+
+def sendMSG():
+    while True:
+        sock_client.send(bytes(raw_input("")))
+        
+
+if len(sys.argv) > 1:
+    # Script for Client
+    sock_client.connect((sys.argv[1], port))
+
+    process = threading.Thread(target=sendMSG)
+    process.daemon = True
+    process.start()
+
+    while True:
+        data = sock_client.recv(1024)
+        if not data:
+            sock_client.close()
+            break
+        print(data)
+
+else:
+    # Script for Server
+    sock_server.bind((ip, port))
+    sock_server.listen(5)
+    print("Server started at "+ip+" on port "+str(port))
+    while True:
+        conn, addr = sock_server.accept()
+        connections.append(conn)
+        process = threading.Thread(target=handler, args=(conn,addr))
+        process.daemon = True
+        process.start()
+        print("Connection established from "+addr[0]+":"+str(addr[1]))
