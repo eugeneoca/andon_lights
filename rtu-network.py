@@ -94,6 +94,7 @@ class Client:
         
         # Find server
         self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.udp_sock.bind(('0.0.0.0', 2003))
         tCatch = threading.Thread(target=self.ip_catch)
         tCatch.daemon = True
