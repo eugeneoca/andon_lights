@@ -157,6 +157,7 @@ class WebServer:
         # Initialize Web Server through creating own socket
         self.port = 80
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.sock.bind(('0.0.0.0', self.port))
         print("WEB SERVER on port "+ str(self.port))
 
