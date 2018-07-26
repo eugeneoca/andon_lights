@@ -47,3 +47,11 @@ else:
         process.daemon = True
         process.start()
         print("Connection established from "+addr[0]+":"+str(addr[1]))
+
+
+
+
+gpio readall
+gpio write 30 0
+gpio mode 29 out
+gpio read 30
