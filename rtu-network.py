@@ -8,6 +8,9 @@ port = 2000
 
 # Broadcast responder - UDP connection for fast Server IP lookup
 lookup_port = 2001
+local_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+local_sock.connect(('8.8.8.8', 80))
+local_ip = local_sock.getsockname()[0]
 
 class BroadcastServer():
     # Broadcast responder
@@ -25,7 +28,7 @@ class BroadcastServer():
             data, addr = self.sock.recvfrom(512)
             print(str(addr) + " found this server.")
             if data=="ip":
-                self.sock.sendto(socket.gethostbyname(socket.gethostname()),addr)
+                self.sock.sendto(self.sock.getsockname()[0],addr)
 
 # END Broadcast responder
 
@@ -95,27 +98,26 @@ class Client:
         # Find server
         self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        self.udp_sock.bind(('0.0.0.0', 2003))
+        self.udp_sock.bind(('0.0.0.0', 2002))
         tCatch = threading.Thread(target=self.ip_catch)
         tCatch.daemon = True
         tCatch.start()
-        found = False
-        while not found:
+        while True:
             if self.server_ip:
                 print("Server ip is " + self.server_ip)
                 break
             for fourth in range(1, 256):
-                local_ip = socket.gethostbyname(socket.gethostname())
-                arr_ip = local_ip.split(".")
+                global local_ip
+                arr_ip = str(local_ip).split(".")
                 first = arr_ip[0]
                 second = arr_ip[1]
                 third = arr_ip[2]
                 base_ip = first + "." + second + "." + third
                 global lookup_port
-                host = (base_ip+"."+str(fourth), lookup_port)
-                self.udp_sock.sendto("ip", host)
+                self.host = (base_ip+"."+str(fourth), lookup_port)
+                #print(self.host)
+                self.udp_sock.sendto("ip", self.host)
         # End Find Server
-
         self.sock.connect((self.server_ip, port))
         transmitter = threading.Thread(target=self.begin_transmission, args=(self.server_ip, port))
         transmitter.daemon = True
@@ -129,8 +131,9 @@ class Client:
                 break
 
     def run(self):
+        global local_sock
         while True:
-            print(socket.gethostbyname(socket.gethostname()) + " on port " + str(port))
+            print(local_sock.getsockname()[0] + " on port " + str(port))
             data = ""
             try:
                 data = self.sock.recv(1024)
@@ -157,7 +160,8 @@ class WebServer:
         # Initialize Web Server through creating own socket
         self.port = 80
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.sock.bind(('0.0.0.0', self.port))
         print("WEB SERVER on port "+ str(self.port))
 
@@ -244,7 +248,9 @@ if len(sys.argv)>1:
     client = Client(port)
     client.run()
 else:
-    print("SERVER IP: " + socket.gethostbyname(socket.gethostname()))
+    _tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    _tempsock.connect(("8.8.8.8", 80))
+    print("SERVER IP: " + _tempsock.getsockname()[0])
     web = WebServer()
     web.run()
     server = Server(port)
