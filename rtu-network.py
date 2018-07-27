@@ -2,8 +2,11 @@ import socket
 import threading
 import sys
 import time
+import datetime
+import random
 
 connections = []
+database = []
 port = 2000
 
 # Broadcast responder - UDP connection for fast Server IP lookup
@@ -32,6 +35,8 @@ class BroadcastServer():
 
 # END Broadcast responder
 
+collections = []
+
 class Server:
     # Server TCP Connection
     def __init__(self, port):
@@ -58,7 +63,9 @@ class Server:
                 break
             # Receive data from client
             with self.lock:
+                global database
                 print(addr[0]+":"+data)
+                database.append(data)
 
     def process(self):
         while True:
@@ -148,7 +155,8 @@ class Client:
             # Send to server
             try:
                 pin_1 = hardware.setMode(1,"OUT")
-                self.sock.send("Data: "+str(pin_1))
+                dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+                self.sock.send("f2:9f:a9:b7:03:1b,1100," +dt)
                 time.sleep(1)
             except:
                 print("Connection lost.")
@@ -214,12 +222,15 @@ class WebServer:
 
             # Data Stream
             if file_serve == "/data":
+                #dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
                 response = self.get_header(200).encode()
-                response += "1110001110001110101 from port " + str(addr[1])
+                global database
+                if database:
+                    response += str(database[-1])
                 conn.send(response)
                 conn.close()
                 output += "\n"
-                with self.lock: print(output)
+                #with self.lock: print(output)
                 return
 
         curr_file_serve = self.root_dir + file_serve
