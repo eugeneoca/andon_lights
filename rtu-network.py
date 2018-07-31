@@ -26,11 +26,12 @@ class BroadcastServer():
         pThread = threading.Thread(target=self.process)
         pThread.daemon = True
         pThread.start()
+
     def process(self):
         while True:
             data, addr = self.sock.recvfrom(512)
-            print(str(addr) + " found this server.")
             if data=="ip":
+                print(str(addr) + " found this server.")
                 self.sock.sendto(self.sock.getsockname()[0],addr)
 
 # END Broadcast responder
@@ -75,6 +76,7 @@ class Server:
             process = threading.Thread(target=self.handle, args=(conn, addr))
             process.daemon = True
             process.start()
+
     def run(self):
         proc = threading.Thread(target=self.process)
         proc.daemon = True
@@ -101,16 +103,25 @@ class Client:
     def __init__(self, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_ip = ''
-        
-        # Find server
+
         self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.udp_sock.bind(('0.0.0.0', 2002))
         tCatch = threading.Thread(target=self.ip_catch)
         tCatch.daemon = True
         tCatch.start()
+
+        self.find_server()
+
+        transmitter = threading.Thread(target=self.begin_transmission, args=(self.server_ip, port))
+        transmitter.daemon = True
+        transmitter.start()
+
+    def find_server(self):
+        # Find server
         while True:
             if self.server_ip:
+                self.sock.connect((self.server_ip, port))
                 print("Server ip is " + self.server_ip)
                 break
             for fourth in range(1, 256):
@@ -124,18 +135,21 @@ class Client:
                 self.host = (base_ip+"."+str(fourth), lookup_port)
                 #print(self.host)
                 self.udp_sock.sendto("ip", self.host)
+        print("Broadcast session ended.")
         # End Find Server
-        self.sock.connect((self.server_ip, port))
-        transmitter = threading.Thread(target=self.begin_transmission, args=(self.server_ip, port))
-        transmitter.daemon = True
-        transmitter.start()
 
     def ip_catch(self):
+        print("Waiting for server response...")
         while True:
-            data, addr = self.udp_sock.recvfrom(512)
-            if data:
-                self.server_ip = addr[0]
-                break
+            try:
+                data, addr = self.udp_sock.recvfrom(512)
+                if data:
+                    self.server_ip = addr[0]
+                    break
+            except:
+                pass
+                    
+
 
     def run(self):
         global local_sock
@@ -146,7 +160,7 @@ class Client:
                 data = self.sock.recv(1024)
             finally:
                 if not data:
-                    print("Terminating connection.")
+                    print("Connection lost.")
                     self.sock.close()
                     break
 
