@@ -7,18 +7,25 @@ import random
 
 connections = []
 database = []
+active_ip = []
 port = 2000
 
 # Broadcast responder - UDP connection for fast Server IP lookup
 lookup_port = 2001
 local_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-local_sock.connect(('8.8.8.8', 80))
+try:
+    # For local network instance
+    local_sock.connect(('8.8.8.8', 80))
+except:
+    # For internal network instance
+    local_sock.connect((socket.gethostbyname(socket.gethostname()), 80))
 local_ip = local_sock.getsockname()[0]
 
 class BroadcastServer():
     # Broadcast responder
     def __init__(self, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(('0.0.0.0', port))
         print("BROADCAST SERVER on port " + str(port))
     
@@ -30,8 +37,11 @@ class BroadcastServer():
     def process(self):
         while True:
             data, addr = self.sock.recvfrom(512)
-            if data=="ip":
+            if data=="ip" and addr[0] not in active_ip:
+                active_ip.append(addr[0])
                 print(str(addr) + " found this server.")
+                self.sock.sendto(self.sock.getsockname()[0],addr)
+            elif data=="ip":
                 self.sock.sendto(self.sock.getsockname()[0],addr)
 
 # END Broadcast responder
@@ -42,6 +52,7 @@ class Server:
     # Server TCP Connection
     def __init__(self, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(('0.0.0.0', port))
         self.sock.listen(50)
         print("STREAM SERVER on port "+str(port))
@@ -55,17 +66,19 @@ class Server:
             except:
                 conn.close()
                 connections.remove(conn)
+                active_ip.remove(addr[0])
                 print(addr[0]+":"+str(addr[1])+" disconnected")
                 break
             if not data:
                 conn.close()
                 connections.remove(conn)
+                active_ip.remove(addr[0])
                 print(addr[0]+":"+str(addr[1])+" disconnected")
                 break
             # Receive data from client
             with self.lock:
                 global database
-                print(addr[0]+":"+data)
+                print(addr[0]+","+data)
                 database.append(data)
 
     def process(self):
@@ -106,10 +119,11 @@ class Client:
 
         self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        self.udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.udp_sock.bind(('0.0.0.0', 2002))
-        tCatch = threading.Thread(target=self.ip_catch)
-        tCatch.daemon = True
-        tCatch.start()
+        self.tCatch = threading.Thread(target=self.ip_catch)
+        self.tCatch.daemon = True
+        
 
         self.find_server()
 
@@ -118,12 +132,23 @@ class Client:
         transmitter.start()
 
     def find_server(self):
+        try:
+            self.tCatch.start()
+        except:
+            pass
         # Find server
         while True:
             if self.server_ip:
-                self.sock.connect((self.server_ip, port))
-                print("Server ip is " + self.server_ip)
-                break
+                try:
+                    self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    self.sock.connect((self.server_ip, port))
+                    print("Server ip is " + self.server_ip)
+                    break
+                except:
+                    print("Connection failed.")
+                    #self.server_ip = ''
+                    #time.sleep(1)
+                    break
             for fourth in range(1, 256):
                 global local_ip
                 arr_ip = str(local_ip).split(".")
@@ -133,8 +158,9 @@ class Client:
                 base_ip = first + "." + second + "." + third
                 global lookup_port
                 self.host = (base_ip+"."+str(fourth), lookup_port)
-                #print(self.host)
                 self.udp_sock.sendto("ip", self.host)
+            time.sleep(1)
+            self.host = ''
         print("Broadcast session ended.")
         # End Find Server
 
@@ -147,7 +173,7 @@ class Client:
                     self.server_ip = addr[0]
                     break
             except:
-                pass
+                self.server_ip = ''
                     
 
 
@@ -165,6 +191,7 @@ class Client:
                     break
 
     def begin_transmission(self, address, port):
+        status = 0
         while True:
             # Send to server
             try:
@@ -173,8 +200,10 @@ class Client:
                 self.sock.send("f2:9f:a9:b7:03:1b,1100," +dt)
                 time.sleep(1)
             except:
-                print("Connection lost.")
-                break
+                if status == 0:
+                    status = 1
+                    print("Transmission stopped.")
+                
 
 class WebServer:
     # Web Server TCP Connection
@@ -274,7 +303,12 @@ if len(sys.argv)>1:
     client.run()
 else:
     _tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    _tempsock.connect(("8.8.8.8", 80))
+    try:
+        # For local network instance
+        _tempsock.connect(("8.8.8.8", 80))
+    except:
+        # For internal network instance
+        _tempsock.connect((socket.gethostbyname(socket.gethostname()), 80))
     print("SERVER IP: " + _tempsock.getsockname()[0])
     web = WebServer()
     web.run()

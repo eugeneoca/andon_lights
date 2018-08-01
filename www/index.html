@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-    <h1><center id="data">Welcome to RTU-NETWORK</center></h1>
+    <container id="data"></container>
+    <h1><center>Welcome to RTU-NETWORK</center></h1>
 
     <script type="text/javascript">
         setInterval(function(){
@@ -16,13 +17,11 @@
             {
                 if (xmlhttp.readyState==4 && xmlhttp.status==200)
                 {
-                    document.getElementById("data").textContent = xmlhttp.responseText
-                    //console.log(xmlhttp.responseText)
+                    document.getElementById("data").textContent = xmlhttp.responseText;
                 }
             }
             xmlhttp.open("GET", window.location.href+"data", true );
             xmlhttp.send(); 
-            //document.getElementById("data").textContent = httpGet("http://192.168.1.16/data")
         }, 100);
     </script>
 </html>
