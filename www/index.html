@@ -41,8 +41,9 @@
             border: 1px solid black;
             padding: 0px;
             font-size: 20px;
-            height: 120px;
-            width: 150px;
+            height: 40px;
+            width: 50%;
+            margin: 0 auto;
         }
     </style>
 
@@ -53,44 +54,152 @@
         <table>
             <tr class="area">
                 <td class="item">
-                    <em>PL1</em><br/>
-                    <span>f2:9f:a9:b7:03:1b</span><br/>
-                    <em>Status: </em><span class="status">Active</span>
+                    <element>
+                        <em>PL1</em>
+                    </element>
                 </td>
-                <td class="item">PL2</td>
-                <td class="item">PL3</td>
-                <td class="item">PL4</td>
-                <td class="item">PL5</td>
-                <td class="item">PL6</td>
+                <td class="item">
+                    <element>
+                        <em>PL13</em>
+                    </element>
+                </td>
             </tr>
             <tr class="area">
-                <td class="item">PL7</td>
-                <td class="item">PL8</td>
-                <td class="item">PL9</td>
-                <td class="item">PL10</td>
-                <td class="item">PL11</td>
-                <td class="item">PL12</td>
+                <td class="item">
+                    <element>
+                        <em>PL2</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL14</em>
+                    </element>
+                </td>
             </tr>
             <tr class="area">
-                    <td class="item">PL13</td>
-                    <td class="item">PL14</td>
-                    <td class="item">PL15</td>
-                    <td class="item">PL16</td>
-                    <td class="item">PL17</td>
-                    <td class="item">PL18</td>
-                </tr>
-                <tr>
-                    <td class="item">PL19</td>
-                    <td class="item">PL20</td>
-                    <td class="item">PL21</td>
-                    <td class="item">PL22</td>
-                    <td class="item">PL23</td>
-                    <td class="item">PL24</td>
-                </tr>
+                <td class="item">
+                    <element>
+                        <em>PL3</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL15</em>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item">
+                    <element>
+                        <em>PL4</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL16</em>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item">
+                    <element>
+                        <em>PL5</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL17</em>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item">
+                    <element>
+                        <em>PL6</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL18</em>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item">
+                    <element>
+                        <em>PL7</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL19</em>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item">
+                    <element>
+                        <em>PL8</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL20</em>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item">
+                    <element>
+                        <em>PL9</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL21</em>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item">
+                    <element>
+                        <em>PL10</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL22</em>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item">
+                    <element>
+                        <em>PL11</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL23</em>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item">
+                    <element>
+                        <em>PL12</em>
+                    </element>
+                </td>
+                <td class="item">
+                    <element>
+                        <em>PL24</em>
+                    </element>
+                </td>
+            </tr>
         </table>
     </div>
     <div class="footer">
-        <p class="footer-content"><em>Server Time:</em> <element id="servertime">2018-08-01 22:21:19</element> | <em>Total Client RTU:</em><element id="rtucount">0</element></p>
+        <p class="footer-content"><em>Server Time:</em> <element id="servertime">Offline</element> | <em>Total Client RTU:</em><element id="rtucount">0</element></p>
     </div>
 
     <script type="text/javascript">
@@ -108,33 +217,52 @@
             {
                 if (xmlhttp.readyState==4 && xmlhttp.status==200)
                 {
-                    var temp = xmlhttp.responseText;
-                    console.log(temp)
-                    /*var temp_arr = temp.split(',');
-                    if(!db_mac.includes(temp_arr[0])){
-                        db_mac.push(temp_arr[0])
-                    }
-                    if(temp_arr[2]){
-                        document.getElementById("servertime").textContent = temp_arr[2]
-                    }else{
-                        document.getElementById("servertime").textContent = "Offline"
-                    }
-                    console.log(temp_arr[2])
+                    var db_mac = eval(xmlhttp.responseText);
                     var counter = 0;
                     for(var i=0; i<db_mac.length; i++){
-                        if(db_mac[i]!==""){
-                            counter++;
+                        if(db_mac!="[]" && db_mac!=""){
+                            counter+=1;
                         }
                     }
                     if(counter){
                         document.getElementById("rtucount").textContent = counter
                     }else{
                         document.getElementById("rtucount").textContent = "Offline"
-                    }*/
+                    }
+                    console.log(counter)
+                    
+                    // RTU Data Parsing
+                    if (window.XMLHttpRequest)
+                    {// code for IE7+, Firefox, Chrome, Opera, Safari
+                        xmlhttp=new XMLHttpRequest();
+                    }
+                    else
+                    {// code for IE6, IE5
+                        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+                    }
+                    xmlhttp.onreadystatechange=function()
+                    {
+                        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                        {
+                            // RTU DATA
+                            var last_reports = eval(xmlhttp.responseText);
+                            for(var i=0; i<last_reports.length; i++){
+                                var server_t = last_reports[i].split(',')[2]
+                                if(last_reports.length){
+                                    document.getElementById("servertime").textContent = server_t
+                                }else{
+                                    document.getElementById("servertime").textContent = "Offline"
+                                }
+                            }
+                        }
+                    }
+                    xmlhttp.open("GET", window.location.href+"last_reports", true );
+                    xmlhttp.send();
+                    // End RTU Data Parsing
                 }
             }
             xmlhttp.open("GET", window.location.href+"active_mac", true );
             xmlhttp.send();
-        }, 50);
+        }, 500);
     </script>
 </html>

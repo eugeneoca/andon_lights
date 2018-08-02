@@ -4,6 +4,7 @@ import sys
 import time
 import datetime
 import random
+import uuid
 
 connections = []
 database = []
@@ -199,7 +200,9 @@ class Client:
             try:
                 pin_1 = hardware.setMode(1,"OUT")
                 dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-                self.sock.send("f2:9f:a9:b7:03:1b,1100," +dt)
+                mac = hex(uuid.getnode())[2:-1]
+                mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
+                self.sock.send(mac+",1100," +dt)
                 time.sleep(1)
             except:
                 if status == 0:
