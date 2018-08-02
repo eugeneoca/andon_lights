@@ -31,7 +31,7 @@
         }
         table{
             margin: 0px auto;
-            margin-top: 30px;
+            margin-top: 5px;
             width: 1024px;
         }
         .area{
@@ -40,23 +40,22 @@
             border: 1px solid black;
             padding: 0px;
             font-size: 15px;
-            height: 40px;
+            height: 50px;
             width: 50%;
             margin: 0 auto;
-        }
-        .status_pl1{
             background-color: #ff1414;
             text-align: center;
+            color: #ffffff;
         }
     </style>
 
-    <div class="head">
+    <!--<div class="head">
         <h2 class="logo">Dychitan Electronics Corporation</h2>
-    </div>
+    </div>-->
     <div class="container">
         <table>
             <tr class="area">
-                <td class="item status_pl1">
+                <td class="item" id="status_pl1">
                     <element>
                         <em>PL1</em> |
                     </element>
@@ -70,144 +69,420 @@
                     </element>
                     <element>
                         <em>| Last Update:</em>
-                        <span id="last_pl1">2018-08-02 13:38:59</span>
+                        <span id="last_pl1">No data</span>
                     </element>
                 </td>
-                <td class="item">
+                <td class="item" id="status_pl13">
                     <element>
-                        <em>PL13</em>
+                        <em>PL13</em> |
                     </element>
-                </td>
-            </tr>
-            <tr class="area">
-                <td class="item">
                     <element>
-                        <em>PL2</em>
+                        <em>MAC:</em>
+                        <select id="mac_pl13">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
                     </element>
-                </td>
-                <td class="item">
                     <element>
-                        <em>PL14</em>
-                    </element>
-                </td>
-            </tr>
-            <tr class="area">
-                <td class="item">
-                    <element>
-                        <em>PL3</em>
-                    </element>
-                </td>
-                <td class="item">
-                    <element>
-                        <em>PL15</em>
+                        <em>| Last Update:</em>
+                        <span id="last_pl13">No data</span>
                     </element>
                 </td>
             </tr>
             <tr class="area">
-                <td class="item">
+                <td class="item" id="status_pl2">
                     <element>
-                        <em>PL4</em>
+                        <em>PL2</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl2">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl2">No data</span>
                     </element>
                 </td>
-                <td class="item">
+                <td class="item" id="status_pl14">
                     <element>
-                        <em>PL16</em>
+                        <em>PL14</em> |
                     </element>
-                </td>
-            </tr>
-            <tr class="area">
-                <td class="item">
                     <element>
-                        <em>PL5</em>
+                        <em>MAC:</em>
+                        <select id="mac_pl14">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
                     </element>
-                </td>
-                <td class="item">
                     <element>
-                        <em>PL17</em>
-                    </element>
-                </td>
-            </tr>
-            <tr class="area">
-                <td class="item">
-                    <element>
-                        <em>PL6</em>
-                    </element>
-                </td>
-                <td class="item">
-                    <element>
-                        <em>PL18</em>
-                    </element>
-                </td>
-            </tr>
-            <tr class="area">
-                <td class="item">
-                    <element>
-                        <em>PL7</em>
-                    </element>
-                </td>
-                <td class="item">
-                    <element>
-                        <em>PL19</em>
+                        <em>| Last Update:</em>
+                        <span id="last_pl14">No data</span>
                     </element>
                 </td>
             </tr>
             <tr class="area">
-                <td class="item">
+                <td class="item" id="status_pl3">
                     <element>
-                        <em>PL8</em>
+                        <em>PL3</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl3">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl3">No data</span>
                     </element>
                 </td>
-                <td class="item">
+                <td class="item" id="status_pl15">
                     <element>
-                        <em>PL20</em>
+                        <em>PL15</em> |
                     </element>
-                </td>
-            </tr>
-            <tr class="area">
-                <td class="item">
                     <element>
-                        <em>PL9</em>
+                        <em>MAC:</em>
+                        <select id="mac_pl15">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
                     </element>
-                </td>
-                <td class="item">
                     <element>
-                        <em>PL21</em>
-                    </element>
-                </td>
-            </tr>
-            <tr class="area">
-                <td class="item">
-                    <element>
-                        <em>PL10</em>
-                    </element>
-                </td>
-                <td class="item">
-                    <element>
-                        <em>PL22</em>
-                    </element>
-                </td>
-            </tr>
-            <tr class="area">
-                <td class="item">
-                    <element>
-                        <em>PL11</em>
-                    </element>
-                </td>
-                <td class="item">
-                    <element>
-                        <em>PL23</em>
+                        <em>| Last Update:</em>
+                        <span id="last_pl15">No data</span>
                     </element>
                 </td>
             </tr>
             <tr class="area">
-                <td class="item">
+                <td class="item" id="status_pl4">
                     <element>
-                        <em>PL12</em>
+                        <em>PL4</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl4">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl4">No data</span>
                     </element>
                 </td>
-                <td class="item">
+                <td class="item" id="status_pl16">
                     <element>
-                        <em>PL24</em>
+                        <em>PL16</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl16">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl16">No data</span>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item" id="status_pl5">
+                    <element>
+                        <em>PL5</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl5">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl5">No data</span>
+                    </element>
+                </td>
+                <td class="item" id="status_pl17">
+                    <element>
+                        <em>PL17</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl17">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl17">No data</span>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item" id="status_pl6">
+                    <element>
+                        <em>PL6</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl6">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl6">No data</span>
+                    </element>
+                </td>
+                <td class="item" id="status_pl18">
+                    <element>
+                        <em>PL18</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl18">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl18">No data</span>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item" id="status_pl7">
+                    <element>
+                        <em>PL7</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl7">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl7">No data</span>
+                    </element>
+                </td>
+                <td class="item" id="status_pl19">
+                    <element>
+                        <em>PL19</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl19">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl19">No data</span>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item" id="status_pl8">
+                    <element>
+                        <em>PL8</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl8">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl8">No data</span>
+                    </element>
+                </td>
+                <td class="item" id="status_pl20">
+                    <element>
+                        <em>PL20</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl20">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl20">No data</span>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item" id="status_pl9">
+                    <element>
+                        <em>PL9</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl9">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl9">No data</span>
+                    </element>
+                </td>
+                <td class="item" id="status_pl21">
+                    <element>
+                        <em>PL21</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl21">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl21">No data</span>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item" id="status_pl10">
+                    <element>
+                        <em>PL10</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl10">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl10">No data</span>
+                    </element>
+                </td>
+                <td class="item" id="status_pl22">
+                    <element>
+                        <em>PL22</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl22">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl22">No data</span>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item" id="status_pl11">
+                    <element>
+                        <em>PL11</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl11">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl11">No data</span>
+                    </element>
+                </td>
+                <td class="item" id="status_pl23">
+                    <element>
+                        <em>PL23</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl23">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl23">No data</span>
+                    </element>
+                </td>
+            </tr>
+            <tr class="area">
+                <td class="item" id="status_pl12">
+                    <element>
+                        <em>PL12</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl12">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl12">No data</span>
+                    </element>
+                </td>
+                <td class="item" id="status_pl24">
+                    <element>
+                        <em>PL24</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl24">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl24">No data</span>
                     </element>
                 </td>
             </tr>
@@ -293,11 +568,21 @@
                                     }else{
                                         for(var i=0; i<last_reports.length; i++){
                                             var mac_curr = last_reports[i].split(',')[0]
+                                            var status = last_reports[i].split(',')[1]
                                             var individual_time = last_reports[i].split(',')[2]
                                             if(last_reports.length && mac_curr==mac_assigned){
                                                 document.getElementById("last_pl"+k).textContent = individual_time
-                                            }else{
-                                                document.getElementById("last_pl"+k).textContent = "Offline"
+                                                var status_pl1 = document.getElementById("status_pl"+k)
+                                                if(status=="1"){
+                                                    // Red
+                                                    status_pl1.style.backgroundColor = "red"
+                                                }else if(status=="2"){
+                                                    // Orange
+                                                    status_pl1.style.backgroundColor = "orange"
+                                                }else if(status=="3"){
+                                                    // Orange
+                                                    status_pl1.style.backgroundColor = "green"
+                                                }
                                             }
                                         }
                                     }

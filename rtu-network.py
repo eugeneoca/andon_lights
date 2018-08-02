@@ -202,7 +202,7 @@ class Client:
                 dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
                 mac = hex(uuid.getnode())[2:-1]
                 mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
-                self.sock.send(mac+","+ str(random.randint(1,4)) +"," +dt)
+                self.sock.send(mac+","+ str(random.randint(1,3)) +"," +dt)
                 time.sleep(1)
             except:
                 if status == 0:
@@ -214,7 +214,7 @@ class WebServer:
     # Web Server TCP Connection
     def __init__(self):
         # Initialize Web Server through creating own socket
-        self.port = 80
+        self.port = 2222
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
