@@ -8,6 +8,8 @@ import random
 connections = []
 database = []
 active_ip = []
+mac_active = []
+last_reports = []
 port = 2000
 
 # Broadcast responder - UDP connection for fast Server IP lookup
@@ -250,6 +252,9 @@ class WebServer:
 
     def node_handler(self, conn, addr):
         # Given that client has been accepted, throw on new thread to avoid blocking
+        global database
+        global mac_active
+        global last_reports
         self.lock = threading.Lock()
         output = ""
         data = conn.recv(1024)
@@ -263,17 +268,59 @@ class WebServer:
             if file_serve == "/":
                 file_serve = "/index.html"
 
-            # Data Stream
-            if file_serve == "/data":
-                #dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+            # Get active MAC
+            if file_serve == "/active_mac":
+                time_now = datetime.datetime.now()
+                date_format = "%Y-%m-%d %H:%M:%S"
                 response = self.get_header(200).encode()
-                global database
                 if database:
-                    response += str(database[-1])
+                    for item in database:
+                        item_arr = item.split(',')
+                        item_time = datetime.datetime.strptime(item_arr[2], date_format)
+                        delta_time = time_now-item_time
+                        delta_time_seconds = delta_time.total_seconds()
+                        if delta_time_seconds<2:
+                            if item_arr[0] not in mac_active:
+                                mac_active.append(item_arr[0])
+                        else:
+                            try:
+                                mac_active.remove(item_arr[0])
+                            except:
+                                pass
+                    response += str(mac_active)
                 conn.send(response)
                 conn.close()
                 output += "\n"
-                #with self.lock: print(output)
+                return
+            
+            # Get last reports
+            if file_serve == "/last_reports":
+                time_now = datetime.datetime.now()
+                date_format = "%Y-%m-%d %H:%M:%S"
+                
+                response = self.get_header(200).encode()
+                if database:
+                    last = ''
+                    if mac_active:
+                        for mac in mac_active:
+                            for item in database:
+                                item_arr = item.split(',')
+                                if mac == item_arr[0]:
+                                    last = item
+                            
+                            if last:
+                                temp = last.split(',')
+                                mac = temp[0]
+                                for i,report in enumerate(last_reports):
+                                    report_mac = report.split(',')[0]
+                                    if report_mac == mac:
+                                        last_reports.pop(i)
+                            last_reports.append(last)
+                        
+                    response += str(last_reports)
+                conn.send(response)
+                conn.close()
+                output += "\n"
                 return
 
         curr_file_serve = self.root_dir + file_serve

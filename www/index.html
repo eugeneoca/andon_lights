@@ -19,20 +19,30 @@
             font-family: monospace;
         }
         .footer{
-            background-color: whitesmoke;
-            position: absolute;
-            left: 0px;
-            right: 0px;
-            bottom: 0px;
             padding: 5px;
             min-width: 1024px;
             max-width: 100%;
+            text-align: center;
         }
         .footer-content{
             margin-left: 50px;
         }
         .container{
-            background-color: red;
+        }
+        table{
+            margin: 0px auto;
+            margin-top: 30px;
+            width: 1024px;
+        }
+        .area{
+            border: 1px solid black;
+        }
+        .item{
+            border: 1px solid black;
+            padding: 0px;
+            font-size: 20px;
+            height: 120px;
+            width: 150px;
         }
     </style>
 
@@ -40,7 +50,44 @@
         <h2 class="logo">Dychitan Electronics Corporation</h2>
     </div>
     <div class="container">
-        body
+        <table>
+            <tr class="area">
+                <td class="item">
+                    <em>PL1</em><br/>
+                    <span>f2:9f:a9:b7:03:1b</span><br/>
+                    <em>Status: </em><span class="status">Active</span>
+                </td>
+                <td class="item">PL2</td>
+                <td class="item">PL3</td>
+                <td class="item">PL4</td>
+                <td class="item">PL5</td>
+                <td class="item">PL6</td>
+            </tr>
+            <tr class="area">
+                <td class="item">PL7</td>
+                <td class="item">PL8</td>
+                <td class="item">PL9</td>
+                <td class="item">PL10</td>
+                <td class="item">PL11</td>
+                <td class="item">PL12</td>
+            </tr>
+            <tr class="area">
+                    <td class="item">PL13</td>
+                    <td class="item">PL14</td>
+                    <td class="item">PL15</td>
+                    <td class="item">PL16</td>
+                    <td class="item">PL17</td>
+                    <td class="item">PL18</td>
+                </tr>
+                <tr>
+                    <td class="item">PL19</td>
+                    <td class="item">PL20</td>
+                    <td class="item">PL21</td>
+                    <td class="item">PL22</td>
+                    <td class="item">PL23</td>
+                    <td class="item">PL24</td>
+                </tr>
+        </table>
     </div>
     <div class="footer">
         <p class="footer-content"><em>Server Time:</em> <element id="servertime">2018-08-01 22:21:19</element> | <em>Total Client RTU:</em><element id="rtucount">0</element></p>
@@ -61,9 +108,9 @@
             {
                 if (xmlhttp.readyState==4 && xmlhttp.status==200)
                 {
-                    //document.getElementById("data").textContent = xmlhttp.responseText;
                     var temp = xmlhttp.responseText;
-                    var temp_arr = temp.split(',');
+                    console.log(temp)
+                    /*var temp_arr = temp.split(',');
                     if(!db_mac.includes(temp_arr[0])){
                         db_mac.push(temp_arr[0])
                     }
@@ -83,10 +130,10 @@
                         document.getElementById("rtucount").textContent = counter
                     }else{
                         document.getElementById("rtucount").textContent = "Offline"
-                    }
+                    }*/
                 }
             }
-            xmlhttp.open("GET", window.location.href+"data", true );
+            xmlhttp.open("GET", window.location.href+"active_mac", true );
             xmlhttp.send();
         }, 50);
     </script>
