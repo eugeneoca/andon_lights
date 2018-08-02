@@ -290,7 +290,7 @@ class WebServer:
                                 mac_active.remove(item_arr[0])
                             except:
                                 pass
-                    print(mac_active)
+                    print(database)
                     response += str(mac_active)
                 conn.send(response)
                 conn.close()
