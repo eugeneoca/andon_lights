@@ -203,7 +203,7 @@ class Client:
                 mac = hex(uuid.getnode())[2:-1]
                 mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
                 self.sock.send(mac+","+ str(random.randint(1,3)) +"," +dt)
-                time.sleep(1)
+                #time.sleep(1)
             except:
                 if status == 0:
                     status = 1
