@@ -35,15 +35,18 @@
             width: 1024px;
         }
         .area{
-            border: 1px solid black;
         }
         .item{
             border: 1px solid black;
             padding: 0px;
-            font-size: 20px;
+            font-size: 15px;
             height: 40px;
             width: 50%;
             margin: 0 auto;
+        }
+        .status_pl1{
+            background-color: #ff1414;
+            text-align: center;
         }
     </style>
 
@@ -53,9 +56,21 @@
     <div class="container">
         <table>
             <tr class="area">
-                <td class="item">
+                <td class="item status_pl1">
                     <element>
-                        <em>PL1</em>
+                        <em>PL1</em> |
+                    </element>
+                    <element>
+                        <em>MAC:</em>
+                        <select id="mac_pl1">
+                            <option disabled selected>
+                                Not Assigned
+                            </option>
+                        </select>
+                    </element>
+                    <element>
+                        <em>| Last Update:</em>
+                        <span id="last_pl1">2018-08-02 13:38:59</span>
                     </element>
                 </td>
                 <td class="item">
@@ -204,6 +219,7 @@
 
     <script type="text/javascript">
         var db_mac = []
+        var last_reports = []
         setInterval(function(){
             if (window.XMLHttpRequest)
             {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -217,7 +233,7 @@
             {
                 if (xmlhttp.readyState==4 && xmlhttp.status==200)
                 {
-                    var db_mac = eval(xmlhttp.responseText);
+                    db_mac = eval(xmlhttp.responseText);
                     var counter = 0;
                     for(var i=0; i<db_mac.length; i++){
                         if(db_mac!="[]" && db_mac!=""){
@@ -229,7 +245,6 @@
                     }else{
                         document.getElementById("rtucount").textContent = "Offline"
                     }
-                    console.log(counter)
                     
                     // RTU Data Parsing
                     if (window.XMLHttpRequest)
@@ -245,13 +260,49 @@
                         if (xmlhttp.readyState==4 && xmlhttp.status==200)
                         {
                             // RTU DATA
-                            var last_reports = eval(xmlhttp.responseText);
+                            last_reports = eval(xmlhttp.responseText);
                             for(var i=0; i<last_reports.length; i++){
                                 var server_t = last_reports[i].split(',')[2]
                                 if(last_reports.length){
                                     document.getElementById("servertime").textContent = server_t
                                 }else{
                                     document.getElementById("servertime").textContent = "Offline"
+                                }
+                            }
+
+                            // Iterate all Production Lines
+                            for(var k=1; k<=24; k++){
+                                //mac_pl1
+                                //last_pl1
+                                
+                                //Check is mac is assigned
+                                var mac_pl1 = "mac_pl"+k
+                                var element = document.getElementById(mac_pl1)
+                                try {
+                                    mac_assigned = element.options[element.selectedIndex].text
+                                } catch (error) {
+                                    mac_assigned = "Not Assigned"
+                                }
+                                try{
+                                    if(mac_assigned=="Not Assigned" || element.length!=db_mac.length){
+                                        var opt_construct = ""
+                                        for(var z=0; z<db_mac.length; z++){
+                                            opt_construct += "<option>"+db_mac[z]+"</option>"
+                                        }
+                                        element.innerHTML = opt_construct
+                                    }else{
+                                        for(var i=0; i<last_reports.length; i++){
+                                            var mac_curr = last_reports[i].split(',')[0]
+                                            var individual_time = last_reports[i].split(',')[2]
+                                            if(last_reports.length && mac_curr==mac_assigned){
+                                                document.getElementById("last_pl"+k).textContent = individual_time
+                                            }else{
+                                                document.getElementById("last_pl"+k).textContent = "Offline"
+                                            }
+                                        }
+                                    }
+                                }catch(error){
+
                                 }
                             }
                         }
