@@ -1,9 +1,53 @@
 <!DOCTYPE html>
 <html>
-    <container id="data"></container>
-    <h1><center>Welcome to RTU-NETWORK</center></h1>
+
+    <style>
+        html, body{
+            margin: 0;
+            padding: 0;
+            min-width: 1024px;
+            max-width: 100%;
+        }
+        .head{
+            height: 55px;
+            padding: 5px 5px 5px 5px;
+            background-color: whitesmoke;
+            border-top: solid black 1px;
+        }
+        .logo{
+            margin-left: 50px;
+            font-family: monospace;
+        }
+        .footer{
+            background-color: whitesmoke;
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            padding: 5px;
+            min-width: 1024px;
+            max-width: 100%;
+        }
+        .footer-content{
+            margin-left: 50px;
+        }
+        .container{
+            background-color: red;
+        }
+    </style>
+
+    <div class="head">
+        <h2 class="logo">Dychitan Electronics Corporation</h2>
+    </div>
+    <div class="container">
+        body
+    </div>
+    <div class="footer">
+        <p class="footer-content"><em>Server Time:</em> <element id="servertime">2018-08-01 22:21:19</element> | <em>Total Client RTU:</em><element id="rtucount">0</element></p>
+    </div>
 
     <script type="text/javascript">
+        var db_mac = []
         setInterval(function(){
             if (window.XMLHttpRequest)
             {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -17,11 +61,33 @@
             {
                 if (xmlhttp.readyState==4 && xmlhttp.status==200)
                 {
-                    document.getElementById("data").textContent = xmlhttp.responseText;
+                    //document.getElementById("data").textContent = xmlhttp.responseText;
+                    var temp = xmlhttp.responseText;
+                    var temp_arr = temp.split(',');
+                    if(!db_mac.includes(temp_arr[0])){
+                        db_mac.push(temp_arr[0])
+                    }
+                    if(temp_arr[2]){
+                        document.getElementById("servertime").textContent = temp_arr[2]
+                    }else{
+                        document.getElementById("servertime").textContent = "Offline"
+                    }
+                    console.log(temp_arr[2])
+                    var counter = 0;
+                    for(var i=0; i<db_mac.length; i++){
+                        if(db_mac[i]!==""){
+                            counter++;
+                        }
+                    }
+                    if(counter){
+                        document.getElementById("rtucount").textContent = counter
+                    }else{
+                        document.getElementById("rtucount").textContent = "Offline"
+                    }
                 }
             }
             xmlhttp.open("GET", window.location.href+"data", true );
-            xmlhttp.send(); 
-        }, 100);
+            xmlhttp.send();
+        }, 50);
     </script>
 </html>
