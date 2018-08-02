@@ -11,10 +11,10 @@ database = []
 active_ip = []
 mac_active = []
 last_reports = []
-port = 2000
+port = 4000
 
 # Broadcast responder - UDP connection for fast Server IP lookup
-lookup_port = 2001
+lookup_port = 4001
 local_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 try:
     # For local network instance
@@ -123,7 +123,7 @@ class Client:
         self.udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.udp_sock.bind(('0.0.0.0', 2002))
+        self.udp_sock.bind(('0.0.0.0', 4002))
         self.tCatch = threading.Thread(target=self.ip_catch)
         self.tCatch.daemon = True
         
@@ -214,7 +214,7 @@ class WebServer:
     # Web Server TCP Connection
     def __init__(self):
         # Initialize Web Server through creating own socket
-        self.port = 2222
+        self.port = 40
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
