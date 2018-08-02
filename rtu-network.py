@@ -283,7 +283,7 @@ class WebServer:
                         delta_time = time_now-item_time
                         delta_time_seconds = delta_time.total_seconds()
                         print(delta_time_seconds)
-                        if delta_time_seconds<2:
+                        if delta_time_seconds<10:
                             if item_arr[0] not in mac_active:
                                 mac_active.append(item_arr[0])
                         else:
