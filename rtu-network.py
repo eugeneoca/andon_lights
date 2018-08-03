@@ -294,7 +294,7 @@ class WebServer:
                 conn.close()
                 output += "\n"
                 return
-            print("HERE")
+
             # Get last reports
             if file_serve == "/last_reports":
                 time_now = datetime.datetime.now()
@@ -325,6 +325,7 @@ class WebServer:
                 output += "\n"
                 return
 
+        print("HERE")
         curr_file_serve = self.root_dir + file_serve
         output += "TARGET:\t\t" + curr_file_serve + "\n"
         try:
