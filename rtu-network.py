@@ -233,11 +233,11 @@ class WebServer:
 
     def process(self):
         self.sock.listen(10)
+        self.threads = []
         while True:
             # New Connection accepted
             conn, addr = self.sock.accept()
-            self.lock = threading.Lock()
-            with self.lock: threading._start_new_thread(target=self.node_handler, args=(conn, addr))
+            threading.Thread(target=self.node_handler, args=(conn, addr)).start()
 
     def get_header(self, code):
         # Resolve desired header
