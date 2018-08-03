@@ -297,7 +297,7 @@ class WebServer:
                     conn.close()
                     output += "\n"
                     return
-                
+                print("HERE")
                 # Get last reports
                 if file_serve == "/last_reports":
                     time_now = datetime.datetime.now()
