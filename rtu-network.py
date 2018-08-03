@@ -254,6 +254,64 @@ class WebServer:
         return header
 
     def node_handler(self, conn, addr):
+        output = ""
+        data = conn.recv(1024)
+        if not data:
+            print("WEB SERVER: " + str(addr))
+            return
+
+        # Parameters [METHOD, REQUEST]
+        param = data.split(' ')
+        method = param[0]
+        request = param[1]
+        output = self.get_header(200).encode()
+
+        print("WEB SERVER: ('method','" + method + "','request','" +  request + "')")
+
+        if method == "GET" and request == "/":
+            output += "root"
+        elif method == "GET" and request == "/active":
+            time_now = datetime.datetime.now()
+            date_format = "%Y-%m-%d %H:%M:%S"
+            #if database:
+            for item in database[-50:]:
+                item_arr = item.split(',')
+                print(item_arr[2], date_format)
+                item_time = datetime.datetime.strptime(item_arr[2], date_format)
+                delta_time = time_now-item_time
+                delta_time_seconds = delta_time.total_seconds()
+                if delta_time_seconds<3:
+                    if item_arr[0] not in mac_active:
+                        mac_active.append(item_arr[0])
+                else:
+                    try:
+                        mac_active.remove(item_arr[0])
+                    except:
+                        pass
+            
+            last = ''
+            if mac_active:
+                for mac in mac_active:
+                    for item in database[-50:]:
+                        item_arr = item.split(',')
+                        if mac == item_arr[0]:
+                            last = item
+                    
+                    if last:
+                        temp = last.split(',')
+                        mac = temp[0]
+                        for i,report in enumerate(last_reports):
+                            report_mac = report.split(',')[0]
+                            if report_mac == mac:
+                                last_reports.pop(i)
+                    last_reports.append(last)
+            output += str([mac_active,last_reports])
+        else:
+            output = self.get_header(404).encode()
+            output += "404 Page not found."
+        conn.send(output)
+        conn.close()
+    """def node_handler(self, conn, addr):
         # Given that client has been accepted, throw on new thread to avoid blocking
         global database
         global mac_active
@@ -347,6 +405,7 @@ class WebServer:
         conn.close()
         output += "\n"
         print(output)
+    """
 
 if len(sys.argv)>1:
     client = Client(port)
