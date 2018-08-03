@@ -349,6 +349,10 @@ class WebServer:
             conn.close()
             output += "\n"
             print(output)
+        try:
+            conn.close()
+        except:
+            pass
 
 if len(sys.argv)>1:
     client = Client(port)
