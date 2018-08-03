@@ -5,6 +5,7 @@ import time
 import datetime
 import random
 import uuid
+from pprint import pprint
 
 connections = []
 database = []
@@ -255,103 +256,105 @@ class WebServer:
 
     def node_handler(self, conn, addr):
         # Given that client has been accepted, throw on new thread to avoid blocking
+        self.lock = threading.Lock()
         global database
         global mac_active
         global last_reports
-        self.lock = threading.Lock()
-        output = ""
-        data = conn.recv(1024)
-        if not data: return
-        output += "Request from: "+addr[0]+":"+str(addr[1]) + "\n"
-        method = data.split(' ')[0]
-        output += "REQUEST METHOD:\t"+ method + "\n"
-        if method=="GET" or method == "HEAD":
-            file_serve = data.split(' ')[1]
-            file_serve = file_serve.split('?')[0] # Ignore ? character
-            if file_serve == "/":
-                file_serve = "/index.html"
+        with self.lock:
+            output = ""
+            data = conn.recv(1024)
+            if not data: return
+            output += "Request from: "+addr[0]+":"+str(addr[1]) + "\n"
+            method = data.split(' ')[0]
+            output += "REQUEST METHOD:\t"+ method + "\n"
+            if method=="GET" or method == "HEAD":
+                file_serve = data.split(' ')[1]
+                file_serve = file_serve.split('?')[0] # Ignore ? character
+                if file_serve == "/":
+                    file_serve = "/index.html"
 
-            # Get active MAC
-            if file_serve == "/active_mac":
-                time_now = datetime.datetime.now()
-                date_format = "%Y-%m-%d %H:%M:%S"
-                response = self.get_header(200).encode()
-                if database:
-                    for item in database:
-                        item_arr = item.split(',')
-                        item_time = datetime.datetime.strptime(item_arr[2], date_format)
-                        delta_time = time_now-item_time
-                        delta_time_seconds = delta_time.total_seconds()
-                        if delta_time_seconds<50:
-                            if item_arr[0] not in mac_active:
-                                mac_active.append(item_arr[0])
-                        else:
-                            try:
-                                mac_active.remove(item_arr[0])
-                            except:
-                                pass
-                    response += str(mac_active)
-                conn.send(response)
-                conn.close()
-                output += "\n"
-                return
-            
-            # Get last reports
-            if file_serve == "/last_reports":
-                time_now = datetime.datetime.now()
-                date_format = "%Y-%m-%d %H:%M:%S"
+                # Get active MAC
+                if file_serve == "/active_mac":
+                    time_now = datetime.datetime.now()
+                    date_format = "%Y-%m-%d %H:%M:%S"
+                    response = self.get_header(200).encode()
+                    if database:
+                        for item in database:
+                            item_arr = item.split(',')
+                            item_time = datetime.datetime.strptime(item_arr[2], date_format)
+                            delta_time = time_now-item_time
+                            delta_time_seconds = delta_time.total_seconds()
+                            if delta_time_seconds<50:
+                                if item_arr[0] not in mac_active:
+                                    mac_active.append(item_arr[0])
+                            else:
+                                try:
+                                    mac_active.remove(item_arr[0])
+                                except:
+                                    pass
+                        response += str(mac_active)
+                    conn.send(response)
+                    conn.close()
+                    output += "\n"
+                    return
                 
-                response = self.get_header(200).encode()
-                if database:
-                    last = ''
-                    if mac_active:
-                        for mac in mac_active:
-                            for item in database:
-                                item_arr = item.split(',')
-                                if mac == item_arr[0]:
-                                    last = item
+                # Get last reports
+                if file_serve == "/last_reports":
+                    time_now = datetime.datetime.now()
+                    date_format = "%Y-%m-%d %H:%M:%S"
+                    
+                    response = self.get_header(200).encode()
+                    if database:
+                        last = ''
+                        if mac_active:
+                            for mac in mac_active:
+                                for item in database:
+                                    item_arr = item.split(',')
+                                    if mac == item_arr[0]:
+                                        last = item
+                                
+                                if last:
+                                    temp = last.split(',')
+                                    mac = temp[0]
+                                    for i,report in enumerate(last_reports):
+                                        report_mac = report.split(',')[0]
+                                        if report_mac == mac:
+                                            last_reports.pop(i)
+                                last_reports.append(last)
                             
-                            if last:
-                                temp = last.split(',')
-                                mac = temp[0]
-                                for i,report in enumerate(last_reports):
-                                    report_mac = report.split(',')[0]
-                                    if report_mac == mac:
-                                        last_reports.pop(i)
-                            last_reports.append(last)
-                        
-                    response += str(last_reports)
-                conn.send(response)
-                conn.close()
-                output += "\n"
-                return
+                        response += str(last_reports)
+                    conn.send(response)
+                    conn.close()
+                    output += "\n"
+                    return
 
-        curr_file_serve = self.root_dir + file_serve
-        output += "TARGET:\t\t" + curr_file_serve + "\n"
-        try:
-            f = open(curr_file_serve, 'rb')
-            if method == "GET":
-                response_data = f.read()
-            f.close()
-            response_header = self.get_header(200)
-        except:
-            output += "File not found. Serving 404 Page" + "\n"
-            response_header = self.get_header(404)
-            if method == "GET":
-                response_data = b"<html><center><h1>404 Page not found</h1></center></html>"
+            curr_file_serve = self.root_dir + file_serve
+            output += "TARGET:\t\t" + curr_file_serve + "\n"
+            try:
+                f = open(curr_file_serve, 'rb')
+                if method == "GET":
+                    response_data = f.read()
+                f.close()
+                response_header = self.get_header(200)
+            except:
+                output += "File not found. Serving 404 Page" + "\n"
+                response_header = self.get_header(404)
+                if method == "GET":
+                    response_data = b"<html><center><h1>404 Page not found</h1></center></html>"
 
-        response = response_header.encode()
-        if method == "GET":
-            response += response_data
-        conn.send(response)
-        conn.close()
-        output += "\n"
-        with self.lock: print(output)
+            response = response_header.encode()
+            if method == "GET":
+                response += response_data
+            conn.send(response)
+            conn.close()
+            output += "\n"
+            print(output)
 
 if len(sys.argv)>1:
     client = Client(port)
     client.run()
 else:
+
     _tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         # For local network instance
