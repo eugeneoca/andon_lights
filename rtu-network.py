@@ -5,13 +5,19 @@ import time
 import datetime
 import random
 import uuid
-from pprint import pprint
-
+import mysql.connector as mysql
+# TODO :: Make cursors individual for every operation
 connections = []
-database = []
 active_ip = []
 mac_active = []
 last_reports = []
+item = []
+# DB Setup
+dbconfig = {
+  "user":"root",
+  "host":"localhost",
+  "database":"eaton"
+}  
 port = 4000
 
 # Broadcast responder - UDP connection for fast Server IP lookup
@@ -63,6 +69,7 @@ class Server:
 
     def handle(self, conn, addr):
         global connections
+        global dbconfig
         self.lock = threading.Lock()
         while True:
             try:
@@ -81,9 +88,23 @@ class Server:
                 break
             # Receive data from client
             with self.lock:
-                global database
-                print(addr[0]+","+data)
-                database.append(data)
+                log = addr[0]+","+data
+                print(log)
+                # Put Data into the database
+                log_arr = log.split(',')
+                db = mysql.connect(**dbconfig)
+                cursor = db.cursor()
+                cursor.execute(
+                    """INSERT INTO reports (devicename, macaddress, status, datetime) VALUES (%s, %s, %s, %s)""",
+                    (log_arr[1], log_arr[2], log_arr[3], log_arr[4])
+                )
+                try:
+                    db.commit()
+                except:
+                    print("DATABASE: Error occured.")
+                finally:
+                    cursor.close()
+                    db.close()
 
     def process(self):
         while True:
@@ -150,8 +171,6 @@ class Client:
                     break
                 except:
                     print("Connection failed.")
-                    #self.server_ip = ''
-                    #time.sleep(1)
                     break
             for fourth in range(1, 256):
                 global local_ip
@@ -178,9 +197,7 @@ class Client:
                     break
             except:
                 self.server_ip = ''
-                    
-
-
+                
     def run(self):
         global local_sock
         while True:
@@ -203,7 +220,7 @@ class Client:
                 dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
                 mac = hex(uuid.getnode())[2:-1]
                 mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
-                self.sock.send(mac+","+ str(random.randint(1,3)) +"," +dt)
+                self.sock.send(sys.argv[1]+","+mac+","+ str(random.randint(1,3)) +"," +dt)
                 time.sleep(1)
             except:
                 if status == 0:
@@ -253,7 +270,26 @@ class WebServer:
         header += "Connection: close\n\n"
         return header
 
+    def get_lastitem(self):
+        global dbconfig
+        global item
+        self.lock = threading.Lock()
+        self.lock.acquire()
+        db = mysql.connect(**dbconfig)
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM reports ORDER BY ID DESC LIMIT 1")
+        result = cursor.fetchone()
+        if result:
+            item = result
+        cursor.close()
+        db.close()
+        self.lock.release()
+
     def node_handler(self, conn, addr):
+        global mac_active
+        global item
+        global dbconfig
+        global last_reports
         output = ""
         data = conn.recv(1024)
         if not data:
@@ -267,41 +303,40 @@ class WebServer:
         output = self.get_header(200).encode()
 
         print("WEB SERVER: ('method','" + method + "','request','" +  request + "')")
-
         if method == "GET" and request == "/":
             output += "root"
         elif method == "GET" and request == "/active":
             time_now = datetime.datetime.now()
             date_format = "%Y-%m-%d %H:%M:%S"
-            #if database:
-            for item in database[-50:]:
-                item_arr = item.split(',')
-                print(item_arr[2], date_format)
-                item_time = datetime.datetime.strptime(item_arr[2], date_format)
+            threading.Thread(target=self.get_lastitem).start()
+            if item:
+                item_time = datetime.datetime.strptime(item[4], date_format)
                 delta_time = time_now-item_time
                 delta_time_seconds = delta_time.total_seconds()
                 if delta_time_seconds<3:
-                    if item_arr[0] not in mac_active:
-                        mac_active.append(item_arr[0])
+                    if item[2] not in mac_active:
+                        mac_active.append(item[2])
                 else:
                     try:
-                        mac_active.remove(item_arr[0])
+                        mac_active.remove(item[2])
                     except:
                         pass
-            
             last = ''
+            
             if mac_active:
                 for mac in mac_active:
-                    for item in database[-50:]:
-                        item_arr = item.split(',')
-                        if mac == item_arr[0]:
-                            last = item
+                    db = mysql.connect(**dbconfig)
+                    cursor = db.cursor()
+                    cursor.execute("SELECT * FROM reports WHERE macaddress = '%s' ORDER BY ID DESC LIMIT 1" % (mac))
+                    item_last = cursor.fetchone()
+                    cursor.close()
+                    db.close()
+                    if item_last:
+                        last = item_last
                     
                     if last:
-                        temp = last.split(',')
-                        mac = temp[0]
                         for i,report in enumerate(last_reports):
-                            report_mac = report.split(',')[0]
+                            report_mac = report[2]
                             if report_mac == mac:
                                 last_reports.pop(i)
                     last_reports.append(last)
@@ -311,101 +346,6 @@ class WebServer:
             output += "404 Page not found."
         conn.send(output)
         conn.close()
-    """def node_handler(self, conn, addr):
-        # Given that client has been accepted, throw on new thread to avoid blocking
-        global database
-        global mac_active
-        global last_reports
-        output = ""
-        data = conn.recv(1024)
-        if not data: return
-        output += "Request from: "+addr[0]+":"+str(addr[1]) + "\n"
-        method = data.split(' ')[0]
-        output += "REQUEST METHOD:\t"+ method + "\n"
-        if method=="GET" or method == "HEAD":
-            file_serve = data.split(' ')[1]
-            file_serve = file_serve.split('?')[0] # Ignore ? character
-            if file_serve == "/":
-                file_serve = "/index.html"
-
-            # Get active MAC
-            if file_serve == "/active_mac":
-                time_now = datetime.datetime.now()
-                date_format = "%Y-%m-%d %H:%M:%S"
-                response = self.get_header(200).encode()
-                if database:
-                    for item in database:
-                        item_arr = item.split(',')
-                        item_time = datetime.datetime.strptime(item_arr[2], date_format)
-                        delta_time = time_now-item_time
-                        delta_time_seconds = delta_time.total_seconds()
-                        if delta_time_seconds<10:
-                            if item_arr[0] not in mac_active:
-                                mac_active.append(item_arr[0])
-                        else:
-                            try:
-                                mac_active.remove(item_arr[0])
-                            except:
-                                pass
-                    response += str(mac_active)
-                conn.send(response)
-                conn.close()
-                output += "\n"
-                return
-
-            # Get last reports
-            if file_serve == "/last_reports":
-                time_now = datetime.datetime.now()
-                date_format = "%Y-%m-%d %H:%M:%S"
-                
-                response = self.get_header(200).encode()
-                if database:
-                    last = ''
-                    if mac_active:
-                        for mac in mac_active:
-                            for item in database:
-                                item_arr = item.split(',')
-                                if mac == item_arr[0]:
-                                    last = item
-                            
-                            if last:
-                                temp = last.split(',')
-                                mac = temp[0]
-                                for i,report in enumerate(last_reports):
-                                    report_mac = report.split(',')[0]
-                                    if report_mac == mac:
-                                        last_reports.pop(i)
-                            last_reports.append(last)
-                        
-                    response += str(last_reports)
-                conn.send(response)
-                conn.close()
-                output += "\n"
-                return
-
-        print("HERE")
-        curr_file_serve = self.root_dir + file_serve
-        output += "TARGET:\t\t" + curr_file_serve + "\n"
-        try:
-            f = open(curr_file_serve, 'rb')
-            if method == "GET":
-                response_data = f.read()
-            f.close()
-            response_header = self.get_header(200)
-        except:
-            output += "File not found. Serving 404 Page" + "\n"
-            response_header = self.get_header(404)
-            if method == "GET":
-                response_data = b"<html><center><h1>404 Page not found</h1></center></html>"
-
-        response = response_header.encode()
-        if method == "GET":
-            response += response_data
-        conn.send(response)
-        conn.close()
-        output += "\n"
-        print(output)
-    """
 
 if len(sys.argv)>1:
     client = Client(port)
