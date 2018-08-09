@@ -16,9 +16,8 @@ item = []
 # DB Setup
 dbconfig = {
   "user":"root",
-  "host":"0.0.0.0",
-  "database":"eaton",
-  "password":"admin"
+  "host":"192.168.1.24",
+  "database":"eaton"
 }
 
 port = 4000
