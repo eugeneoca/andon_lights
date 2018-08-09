@@ -92,10 +92,10 @@
                     var node_green = '<tr><td><div style="background-color: green; width: 50px; height: 50px; float: left; border-radius: 50px; margin-left: 15px;"></div><div style="margin-left: 10px; margin-top: 10px; font-size: 20px; float: left;">'
                     var node_orange = '<tr><td><div style="background-color: orange; width: 50px; height: 50px; float: left; border-radius: 50px; margin-left: 15px;"></div><div style="margin-left: 10px; margin-top: 10px; font-size: 20px; float: left;">'
                     var node_black = '<tr><td><div style="background-color: black; width: 50px; height: 50px; float: left; border-radius: 50px; margin-left: 15px;"></div><div style="margin-left: 10px; margin-top: 10px; font-size: 20px; float: left;">'
-                    var side = 1;
                     if(last_reports.length==0){
                         document.getElementById("lefttable").innerHTML = "No available data"
                     }
+                    var side=1; // Accumulator for determining which side of the screen
                     for(var r=0; r<last_reports.length; r++){
                         var devicename = last_reports[r][1]
                         var mac = last_reports[r][2]
@@ -110,19 +110,20 @@
                         }
                         
                         // Check if report origin is active
+                        var is_active = 0
                         if(active_macs.length==0){
                             var node_color = node_black;
                         }else{
-                            var is_active = 0
                             for(var i=0; i<active_macs.length; i++){
                                 if(active_macs[i]==mac){
                                     // Device is still active
                                     is_active = 1;
                                 }
                             }
-                            if(!is_active){
-                                node_color = node_black;
-                            }
+                        }
+                        //console.log(mac+">>>is_active="+is_active)
+                        if(!is_active){
+                            node_color = node_black;
                         }
                         var node = node_color + devicename.toUpperCase() + " | " + mac + " | " + time +'</div></td></tr>';
                         if(side<13){
@@ -132,9 +133,6 @@
                         }
                         side++;
                     }
-
-                    
-                    //document.getElementById("contentwrapper").textContent = active_macs
                 }
             }
             xmlhttp.open("GET", window.location.href+"active", true );

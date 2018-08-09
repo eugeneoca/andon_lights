@@ -315,6 +315,34 @@ class WebServer:
             time_now = datetime.datetime.now()
             date_format = "%Y-%m-%d %H:%M:%S"
             threading.Thread(target=self.get_lastitem).start()
+            # Check if all mac is still alive
+            for individual in mac_active:
+                self.lock = threading.Lock()
+                self.lock.acquire()
+                db = mysql.connect(**dbconfig)
+                cursor = db.cursor()
+                cursor.execute("SELECT * FROM reports where macaddress = '%s'ORDER BY ID DESC LIMIT 1" % (individual))
+                data = cursor.fetchone()
+                try:
+                    data_time = datetime.datetime.strptime(data[4], date_format)
+                    delta_time = time_now-data_time
+                    delta_time_seconds = delta_time.total_seconds()
+                    if delta_time_seconds<5: # Should be 5 seconds
+                        pass # Avoid redundant adding
+                    else:
+                        try:
+                            mac_active.remove(data[2])
+                        except:
+                            pass
+                except:
+                    pass
+                cursor.close()
+                db.close()
+                try:
+                    self.lock.release()
+                except:
+                    pass
+
             if item:
                 try:
                     item_time = datetime.datetime.strptime(item[4], date_format)
