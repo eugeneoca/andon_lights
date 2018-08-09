@@ -6,6 +6,7 @@ import datetime
 import random
 import uuid
 import mysql.connector as mysql
+import json
 # TODO :: Make cursors individual for every operation
 connections = []
 active_ip = []
@@ -232,7 +233,7 @@ class WebServer:
     # Web Server TCP Connection
     def __init__(self):
         # Initialize Web Server through creating own socket
-        self.port = 40
+        self.port = 81
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -283,7 +284,10 @@ class WebServer:
             item = result
         cursor.close()
         db.close()
-        self.lock.release()
+        try:
+            self.lock.release()
+        except:
+            pass
 
     def node_handler(self, conn, addr):
         global mac_active
@@ -293,7 +297,7 @@ class WebServer:
         output = ""
         data = conn.recv(1024)
         if not data:
-            print("WEB SERVER: " + str(addr))
+            #print("WEB SERVER: " + str(addr))
             return
 
         # Parameters [METHOD, REQUEST]
@@ -302,25 +306,31 @@ class WebServer:
         request = param[1]
         output = self.get_header(200).encode()
 
-        print("WEB SERVER: ('method','" + method + "','request','" +  request + "')")
+        #print("WEB SERVER: ('method','" + method + "','request','" +  request + "')")
         if method == "GET" and request == "/":
-            output += "root"
+            indexpath = self.root_dir + "/index.html"
+            f = open(indexpath, 'rb')
+            output += f.read()
+            f.close()
         elif method == "GET" and request == "/active":
             time_now = datetime.datetime.now()
             date_format = "%Y-%m-%d %H:%M:%S"
             threading.Thread(target=self.get_lastitem).start()
             if item:
-                item_time = datetime.datetime.strptime(item[4], date_format)
-                delta_time = time_now-item_time
-                delta_time_seconds = delta_time.total_seconds()
-                if delta_time_seconds<3:
-                    if item[2] not in mac_active:
-                        mac_active.append(item[2])
-                else:
-                    try:
-                        mac_active.remove(item[2])
-                    except:
-                        pass
+                try:
+                    item_time = datetime.datetime.strptime(item[4], date_format)
+                    delta_time = time_now-item_time
+                    delta_time_seconds = delta_time.total_seconds()
+                    if delta_time_seconds<5: # Should be 5 seconds
+                        if item[2] not in mac_active:
+                            mac_active.append(item[2])
+                    else:
+                        try:
+                            mac_active.remove(item[2])
+                        except:
+                            pass
+                except:
+                    pass
             last = ''
             
             if mac_active:
@@ -340,7 +350,7 @@ class WebServer:
                             if report_mac == mac:
                                 last_reports.pop(i)
                     last_reports.append(last)
-            output += str([mac_active,last_reports])
+            output += str(json.dumps([mac_active,last_reports]))
         else:
             output = self.get_header(404).encode()
             output += "404 Page not found."
