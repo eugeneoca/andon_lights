@@ -12,12 +12,16 @@ active_ip = []
 mac_active = []
 last_reports = []
 item = []
+
 # DB Setup
 dbconfig = {
   "user":"root",
-  "host":"localhost",
+  "host":"192.168.1.24",
   "database":"eaton"
-}  
+}
+
+# Check if database exists
+
 port = 4000
 
 # Broadcast responder - UDP connection for fast Server IP lookup

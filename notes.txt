@@ -760,3 +760,5 @@ gpio read 30
         }, 1000);
     </script>
 </html>
+
+apt install python-pip
