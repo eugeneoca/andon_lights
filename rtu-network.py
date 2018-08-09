@@ -16,7 +16,7 @@ item = []
 # DB Setup
 dbconfig = {
   "user":"root",
-  "host":"192.168.1.24",
+  "host":"0.0.0.0",
   "database":"eaton"
 }
 
