@@ -5,9 +5,8 @@ import time
 import datetime
 import random
 import uuid
-import mysql.connector as mysql
 import json
-# TODO :: Make cursors individual for every operation
+
 connections = []
 active_ip = []
 mac_active = []
@@ -361,7 +360,10 @@ if len(sys.argv)>1:
     client = Client(port)
     client.run()
 else:
-
+    try:
+        import mysql.connector as mysql
+    except:
+        print("Error importing module mysql.connector. Please execute: pip install mysql-connector")
     _tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         # For local network instance
