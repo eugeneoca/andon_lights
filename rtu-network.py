@@ -83,15 +83,18 @@ class Server:
                 print(addr[0]+":"+str(addr[1])+" disconnected")
                 break
             if not data:
-                conn.close()
-                connections.remove(conn)
-                active_ip.remove(addr[0])
-                print(addr[0]+":"+str(addr[1])+" disconnected")
+                try:
+                    conn.close()
+                    connections.remove(conn)
+                    active_ip.remove(addr[0])
+                    print(addr[0]+":"+str(addr[1])+" disconnected")
+                except:
+                    pass
                 break
             # Receive data from client
             with self.lock:
                 log = addr[0]+","+data
-                print(log)
+                #print(log)
                 # Put Data into the database
                 log_arr = log.split(',')
                 db = mysql.connect(**dbconfig)
@@ -390,6 +393,12 @@ if len(sys.argv)>1:
     client = Client(port)
     client.run()
 else:
+
+    # Get Web Interface Structure
+    base = open('structure.db', 'rb')
+    base_arr = base.read().split(';')
+    print(json.dumps(base_arr[0])[0])
+    base.close()
     try:
         import mysql.connector as mysql
     except:
