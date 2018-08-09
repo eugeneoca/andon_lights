@@ -20,8 +20,6 @@ dbconfig = {
   "database":"eaton"
 }
 
-# Check if database exists
-
 port = 4000
 
 # Broadcast responder - UDP connection for fast Server IP lookup
