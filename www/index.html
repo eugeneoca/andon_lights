@@ -5,7 +5,7 @@
         <style>
             html, body{
                 margin: 0px auto;
-                margin-top: 10px;
+                margin-top: 5px;
                 padding: 0px;
                 min-width: 720px;
             }
@@ -17,16 +17,180 @@
                 float: left;
                 width: 50%;
             }
+            table,.container{
+                width: 1280px;
+                margin: 0px auto;
+            }
+            td{
+                padding: 2px;
+                font-size: 14pt;
+                border: 0px solid black;
+                .background-color: #659B3B;
+                background-color: #569FD4;
+                color: black;
+                font-family: monospace;
+                text-indent: 5px;
+            }
+            .blankcell{
+                background-color: white;
+                border: 0px;
+            }
+            .nametag{
+                text-align: center;
+                text-indent: 0px;
+                border-radius: 15px 0px 0px 15px;
+            }
+            .status_handler{
+                width: 260px;
+                height: 22px;
+            }
+            .ip_handler{
+                width: 260px;
+                height: 22px;
+            }
+            .mac_handler{
+                width: 260px;
+                height: 22px;
+            }
+            .time_handler{
+                width: 260px;
+                height: 22px;
+            }
+            .spacer{
+                width: 50px;
+                border: 0px;
+                background-color: white;
+            }
+            .bg{
+                margin: 0px auto;
+                padding: 0px;
+            }
         </style>
     </head>
     <body>
-        <div id="contentwrapper">
-            <div class="left-rtu">
-                <table id="lefttable"></table>
-            </div>
-            <div class="right-rtu">
-                <table id="righttable"></table>
-            </div>
+        <div class="container">
+            <table>
+                <tr>
+                    <td class="nametag">PL01</td><td class="status_handler" id="status_pl01">Offline</td><td class="ip_handler" id="ip_pl01"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL13</td><td class="status_handler" id="status_pl13">Offline</td><td class="ip_handler" id="ip_pl13"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl01"></td><td class="time_handler" id="time_pl01"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl13"></td><td class="time_handler" id="time_pl13"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL02</td><td class="status_handler" id="status_pl02">Offline</td><td class="ip_handler" id="ip_pl02"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL14</td><td class="status_handler" id="status_pl14">Offline</td><td class="ip_handler" id="ip_pl14"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl02"></td><td class="time_handler" id="time_pl02"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl14"></td><td class="time_handler" id="time_pl14"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL03</td><td class="status_handler" id="status_pl03">Offline</td><td class="ip_handler" id="ip_pl03"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL15</td><td class="status_handler" id="status_pl15">Offline</td><td class="ip_handler" id="ip_pl15"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl03"></td><td class="time_handler" id="time_pl03"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl15"></td><td class="time_handler" id="time_pl15"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL04</td><td class="status_handler" id="status_pl04">Offline</td><td class="ip_handler" id="ip_pl04"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL16</td><td class="status_handler" id="status_pl16">Offline</td><td class="ip_handler" id="ip_pl16"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl04"></td><td class="time_handler" id="time_pl04"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl16"></td><td class="time_handler" id="time_pl16"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL05</td><td class="status_handler" id="status_pl05">Offline</td><td class="ip_handler" id="ip_pl05"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL17</td><td class="status_handler" id="status_pl17">Offline</td><td class="ip_handler" id="ip_pl17"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl05"></td><td class="time_handler" id="time_pl05"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl17"></td><td class="time_handler" id="time_pl17"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL06</td><td class="status_handler" id="status_pl06">Offline</td><td class="ip_handler" id="ip_pl06"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL18</td><td class="status_handler" id="status_pl18">Offline</td><td class="ip_handler" id="ip_pl18"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl06"></td><td class="time_handler" id="time_pl06"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl18"></td><td class="time_handler" id="time_pl18"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL07</td><td class="status_handler" id="status_pl07">Offline</td><td class="ip_handler" id="ip_pl07"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL19</td><td class="status_handler" id="status_pl19">Offline</td><td class="ip_handler" id="ip_pl19"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl07"></td><td class="time_handler" id="time_pl07"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl19"></td><td class="time_handler" id="time_pl19"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL08</td><td class="status_handler" id="status_pl08">Offline</td><td class="ip_handler" id="ip_pl08"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL20</td><td class="status_handler" id="status_pl20">Offline</td><td class="ip_handler" id="ip_pl20"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl08"></td><td class="time_handler" id="time_pl08"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl20"></td><td class="time_handler" id="time_pl20"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL09</td><td class="status_handler" id="status_pl09">Offline</td><td class="ip_handler" id="ip_pl09"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL21</td><td class="status_handler" id="status_pl21">Offline</td><td class="ip_handler" id="ip_pl21"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl09"></td><td class="time_handler" id="time_pl09"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl21"></td><td class="time_handler" id="time_pl21"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL10</td><td class="status_handler" id="status_pl10">Offline</td><td class="ip_handler" id="ip_pl10"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL22</td><td class="status_handler" id="status_pl22">Offline</td><td class="ip_handler" id="ip_pl22"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl10"></td><td class="time_handler" id="time_pl10"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl22"></td><td class="time_handler" id="time_pl22"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL11</td><td class="status_handler" id="status_pl11">Offline</td><td class="ip_handler" id="ip_pl11"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL23</td><td class="status_handler" id="status_pl23">Offline</td><td class="ip_handler" id="ip_pl23"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl11"></td><td class="time_handler" id="time_pl11"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl23"></td><td class="time_handler" id="time_pl23"></td>
+                </tr>
+                <tr>
+                    <td class="nametag">PL12</td><td class="status_handler" id="status_pl12">Offline</td><td class="ip_handler" id="ip_pl12"></td>
+                    <td class="spacer"></td>
+                    <td class="nametag">PL24</td><td class="status_handler" id="status_pl24">Offline</td><td class="ip_handler" id="ip_pl24"></td>
+                </tr>
+                <tr>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl12"></td><td class="time_handler" id="time_pl12"></td>
+                    <td class="spacer"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl24"></td><td class="time_handler" id="time_pl24"></td>
+                </tr>
+            </table>
         </div>
     </body>
     <script>
@@ -43,61 +207,60 @@
             {
                 if (xmlhttp.readyState==4 && xmlhttp.status==200)
                 {
-                    db_mac = eval(xmlhttp.responseText);
-                    active_macs = db_mac[0]
-                    last_reports = db_mac[1]
-                    
-                    document.getElementById("lefttable").innerHTML = ""
+                    db_fetch = eval(xmlhttp.responseText);
+                    active_ip = db_fetch[0]
+                    inactive_ip = db_fetch[1]
+                    last_reports = db_fetch[2]
 
-                    var node_red = '<tr><td><div style="background-color: red; width: 50px; height: 50px; float: left; border-radius: 50px; margin-left: 15px;"></div><div style="margin-left: 10px; margin-top: 10px; font-size: 20px; float: left;">'
-                    var node_green = '<tr><td><div style="background-color: green; width: 50px; height: 50px; float: left; border-radius: 50px; margin-left: 15px;"></div><div style="margin-left: 10px; margin-top: 10px; font-size: 20px; float: left;">'
-                    var node_orange = '<tr><td><div style="background-color: orange; width: 50px; height: 50px; float: left; border-radius: 50px; margin-left: 15px;"></div><div style="margin-left: 10px; margin-top: 10px; font-size: 20px; float: left;">'
-                    var node_black = '<tr><td><div style="background-color: black; width: 50px; height: 50px; float: left; border-radius: 50px; margin-left: 15px;"></div><div style="margin-left: 10px; margin-top: 10px; font-size: 20px; float: left;">'
-                    if(last_reports.length==0){
-                        document.getElementById("lefttable").innerHTML = "No available data"
-                    }
-                    var side=1; // Accumulator for determining which side of the screen
-                    for(var r=0; r<last_reports.length; r++){
-                        var devicename = last_reports[r][1]
-                        var mac = last_reports[r][2]
-                        var status = last_reports[r][3]
-                        var time = last_reports[r][4]
+                    // Populate tables using active_ip list
+                    for (var i = 0; i < last_reports.length; i++) {
+                        devicename = last_reports[i][1]
+                        ip = last_reports[i][2]
+                        mac = last_reports[i][3]
+                        status = last_reports[i][4]
+                        timestamp = last_reports[i][5]
                         if(status=="1"){
-                            var node_color = node_green;
+                            // Running
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Running"
+                            document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#659B3B"
                         }else if(status=="2"){
-                            var node_color = node_orange;
+                            // Idle
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Idle"
+                            document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#FFBF00"
                         }else if(status=="3"){
-                            var node_color = node_red;
+                            // Stopped
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Stopped"
+                            document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "red"
+                        }else if(status=="4"){
+                            // Offline
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Offline"
+                            document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#569FD4"
                         }
-                        
-                        // Check if report origin is active
-                        var is_active = 0
-                        if(active_macs.length==0){
-                            var node_color = node_black;
+                        document.getElementById("ip_"+devicename.toLowerCase()).innerHTML = ip
+                        document.getElementById("mac_"+devicename.toLowerCase()).innerHTML = mac.toUpperCase()
+                        document.getElementById("time_"+devicename.toLowerCase()).innerHTML = timestamp
+                    }
+
+                    // Monitor Offline Clients
+                    for (var i = 1; i <= 24; i++) {
+                        if(i<10){
+                            inspect_ip = document.getElementById("ip_pl0"+i).innerHTML
+                            if(inactive_ip.includes(inspect_ip)){
+                                document.getElementById("status_pl0"+i).innerHTML = "Offline"
+                                document.getElementById("status_pl0"+i).style.backgroundColor = "#569FD4"
+                            }
                         }else{
-                            for(var i=0; i<active_macs.length; i++){
-                                if(active_macs[i]==mac){
-                                    // Device is still active
-                                    is_active = 1;
-                                }
+                            inspect_ip = document.getElementById("ip_pl"+i).innerHTML
+                            if(inactive_ip.includes(inspect_ip)){
+                                document.getElementById("status_pl"+i).innerHTML = "Offline"
+                                document.getElementById("status_pl"+i).style.backgroundColor = "#569FD4"
                             }
                         }
-                        //console.log(mac+">>>is_active="+is_active)
-                        if(!is_active){
-                            node_color = node_black;
-                        }
-                        var node = node_color + devicename.toUpperCase() + " | " + mac + " | " + time +'</div></td></tr>';
-                        if(side<13){
-                            document.getElementById("lefttable").innerHTML += node;
-                        }else{
-                            document.getElementById("righttable").innerHTML += node;
-                        }
-                        side++;
                     }
                 }
             }
             xmlhttp.open("GET", window.location.href+"active", true );
             xmlhttp.send();
-        }, 100);
+        }, 500);
     </script>
 </html>

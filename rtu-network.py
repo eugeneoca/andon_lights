@@ -9,6 +9,7 @@ import json
 
 connections = []
 active_ip = []
+inactive_ip = []
 mac_active = []
 last_reports = []
 item = []
@@ -16,7 +17,7 @@ item = []
 # DB Setup
 dbconfig = {
   "user":"root",
-  "host":"192.168.1.24",
+  "host":"127.0.0.1",
   "database":"eaton"
 }
 
@@ -61,6 +62,9 @@ class BroadcastServer():
 collections = []
 
 class Server:
+    global connections
+    global dbconfig
+    global inactive_ip
     # Server TCP Connection
     def __init__(self, port):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -70,8 +74,6 @@ class Server:
         print("STREAM SERVER on port "+str(port))
 
     def handle(self, conn, addr):
-        global connections
-        global dbconfig
         self.lock = threading.Lock()
         while True:
             try:
@@ -80,6 +82,7 @@ class Server:
                 conn.close()
                 connections.remove(conn)
                 active_ip.remove(addr[0])
+                inactive_ip.append(addr[0])
                 print(addr[0]+":"+str(addr[1])+" disconnected")
                 break
             if not data:
@@ -87,6 +90,7 @@ class Server:
                     conn.close()
                     connections.remove(conn)
                     active_ip.remove(addr[0])
+                    inactive_ip.append(addr[0])
                     print(addr[0]+":"+str(addr[1])+" disconnected")
                 except:
                     pass
@@ -94,14 +98,13 @@ class Server:
             # Receive data from client
             with self.lock:
                 log = addr[0]+","+data
-                #print(log)
                 # Put Data into the database
                 log_arr = log.split(',')
                 db = mysql.connect(**dbconfig)
                 cursor = db.cursor()
                 cursor.execute(
-                    """INSERT INTO reports (devicename, macaddress, status, datetime) VALUES (%s, %s, %s, %s)""",
-                    (log_arr[1], log_arr[2], log_arr[3], log_arr[4])
+                    """INSERT INTO reports (devicename, ip, macaddress, status, datetime) VALUES (%s, %s,%s, %s, %s)""",
+                    (log_arr[1], log_arr[0], log_arr[2], log_arr[3], log_arr[4])
                 )
                 try:
                     db.commit()
@@ -115,6 +118,8 @@ class Server:
         while True:
             conn, addr = self.sock.accept()
             print(addr[0]+":"+str(addr[1])+" Connected")
+            if addr[0] in inactive_ip:
+                inactive_ip.remove(addr[0])
             connections.append(conn)
             process = threading.Thread(target=self.handle, args=(conn, addr))
             process.daemon = True
@@ -186,7 +191,7 @@ class Client:
                 base_ip = first + "." + second + "." + third
                 global lookup_port
                 self.host = (base_ip+"."+str(fourth), lookup_port)
-                self.udp_sock.sendto("ip", self.host)
+                self.udp_sock.sendto("ip".encode(), self.host)
             time.sleep(1)
             self.host = ''
         print("Broadcast session ended.")
@@ -197,7 +202,7 @@ class Client:
         while True:
             try:
                 data, addr = self.udp_sock.recvfrom(512)
-                if data:
+                if data.decode():
                     self.server_ip = addr[0]
                     break
             except:
@@ -226,7 +231,7 @@ class Client:
                 mac = hex(uuid.getnode())[2:-1]
                 mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
                 self.sock.send(sys.argv[1]+","+mac+","+ str(random.randint(1,3)) +"," +dt)
-                time.sleep(1)
+                time.sleep(10)
             except:
                 if status == 0:
                     status = 1
@@ -234,13 +239,16 @@ class Client:
                 
 
 class WebServer:
+    global mac_active
+    global item
+    global dbconfig
+    global last_reports
     # Web Server TCP Connection
     def __init__(self):
         # Initialize Web Server through creating own socket
         self.port = 81
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.sock.bind(('0.0.0.0', self.port))
         print("WEB SERVER on port "+ str(self.port))
 
@@ -276,8 +284,6 @@ class WebServer:
         return header
 
     def get_lastitem(self):
-        global dbconfig
-        global item
         self.lock = threading.Lock()
         self.lock.acquire()
         db = mysql.connect(**dbconfig)
@@ -294,10 +300,9 @@ class WebServer:
             pass
 
     def node_handler(self, conn, addr):
-        global mac_active
-        global item
-        global dbconfig
-        global last_reports
+        self.lock = threading.Lock()
+        self.lock.acquire()
+        last_reports=[]
         output = ""
         data = conn.recv(1024)
         if not data:
@@ -310,7 +315,6 @@ class WebServer:
         request = param[1]
         output = self.get_header(200).encode()
 
-        #print("WEB SERVER: ('method','" + method + "','request','" +  request + "')")
         if method == "GET" and request == "/":
             indexpath = self.root_dir + "/index.html"
             f = open(indexpath, 'rb')
@@ -320,74 +324,29 @@ class WebServer:
             time_now = datetime.datetime.now()
             date_format = "%Y-%m-%d %H:%M:%S"
             threading.Thread(target=self.get_lastitem).start()
-            # Check if all mac is still alive
-            for individual in mac_active:
-                self.lock = threading.Lock()
-                self.lock.acquire()
-                db = mysql.connect(**dbconfig)
-                cursor = db.cursor()
-                cursor.execute("SELECT * FROM reports where macaddress = '%s'ORDER BY ID DESC LIMIT 1" % (individual))
-                data = cursor.fetchone()
+            for ip_item in active_ip:
                 try:
-                    data_time = datetime.datetime.strptime(data[4], date_format)
-                    delta_time = time_now-data_time
-                    delta_time_seconds = delta_time.total_seconds()
-                    if delta_time_seconds<5: # Should be 5 seconds
-                        pass # Avoid redundant adding
-                    else:
-                        try:
-                            mac_active.remove(data[2])
-                        except:
-                            pass
-                except:
-                    pass
-                cursor.close()
-                db.close()
-                try:
-                    self.lock.release()
-                except:
-                    pass
-
-            if item:
-                try:
-                    item_time = datetime.datetime.strptime(item[4], date_format)
-                    delta_time = time_now-item_time
-                    delta_time_seconds = delta_time.total_seconds()
-                    if delta_time_seconds<5: # Should be 5 seconds
-                        if item[2] not in mac_active:
-                            mac_active.append(item[2])
-                    else:
-                        try:
-                            mac_active.remove(item[2])
-                        except:
-                            pass
-                except:
-                    pass
-            last = ''
-            
-            if mac_active:
-                for mac in mac_active:
-                    db = mysql.connect(**dbconfig)
-                    cursor = db.cursor()
-                    cursor.execute("SELECT * FROM reports WHERE macaddress = '%s' ORDER BY ID DESC LIMIT 1" % (mac))
-                    item_last = cursor.fetchone()
-                    cursor.close()
-                    db.close()
-                    if item_last:
-                        last = item_last
+                    # Get latest log from db
+                    db = mysql.connect(**dbconfig);
+                    cursor = db.cursor();
+                    cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item));
+                    result = cursor.fetchone();
+                    last_reports.append(result)
+                    cursor.close();
+                    db.close();
+                except Exception as e:
+                    print(e)
                     
-                    if last:
-                        for i,report in enumerate(last_reports):
-                            report_mac = report[2]
-                            if report_mac == mac:
-                                last_reports.pop(i)
-                    last_reports.append(last)
-            output += str(json.dumps([mac_active,last_reports]))
+            output += str(json.dumps([active_ip,inactive_ip,last_reports]))
         else:
             output = self.get_header(404).encode()
             output += "404 Page not found."
         conn.send(output)
         conn.close()
+    try:
+        self.lock.release()
+    except:
+        pass
 
 if len(sys.argv)>1:
     client = Client(port)
@@ -403,6 +362,7 @@ else:
         import mysql.connector as mysql
     except:
         print("Error importing module mysql.connector. Please execute: pip install mysql-connector")
+        exit()
     _tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         # For local network instance
