@@ -386,9 +386,9 @@ class WebServer:
                     time.sleep(2)
                 try:
                     cursor = db.cursor()
-                    cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item));
+                    cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item))
                     result = cursor.fetchone()
-                    cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (result[1]));
+                    cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (result[1]))
                     name = cursor.fetchone()
                     if name:
                         result = list(result)
