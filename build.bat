@@ -1,6 +1,6 @@
 @echo off
 title RTU-NETWORK
 :loop
-python rtu-network.py pl01
+python2 rtu-network.py pl01
 goto loop
 pause

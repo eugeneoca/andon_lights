@@ -7,7 +7,8 @@
                 margin: 0px auto;
                 margin-top: 5px;
                 padding: 0px;
-                min-width: 720px;
+                min-width: 680px;
+                max-width: 1768px;
             }
             .left-rtu{
                 float: left;
@@ -18,18 +19,27 @@
                 width: 50%;
             }
             table,.container{
-                width: 1280px;
+                width: 100%;
                 margin: 0px auto;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
+                height: 100%;
+                clear: both;
             }
             td{
                 padding: 2px;
-                font-size: 14pt;
+                font-size: 20px;
+                font-weight: bold;
                 border: 0px solid black;
                 .background-color: #659B3B;
                 background-color: #569FD4;
                 color: black;
                 font-family: monospace;
                 text-indent: 5px;
+                text-align: center;
             }
             .blankcell{
                 background-color: white;
@@ -38,26 +48,33 @@
             .nametag{
                 text-align: center;
                 text-indent: 0px;
-                border-radius: 15px 0px 0px 15px;
+                border-radius: 5px 5px 5px 5px;
+                min-width: 40px;
+                max-width: 50px;
             }
             .status_handler{
                 width: 260px;
-                height: 22px;
+                min-height: 22px;
+                max-height: 100%;
             }
             .ip_handler{
                 width: 260px;
-                height: 22px;
+                min-height: 22px;
+                max-height: 100%;
             }
             .mac_handler{
                 width: 260px;
-                height: 22px;
+                min-height: 22px;
+                max-height: 100%;
             }
             .time_handler{
                 width: 260px;
-                height: 22px;
+                min-height: 22px;
+                max-height: 100%;
             }
             .spacer{
-                width: 50px;
+                min-width: 50px;
+                max-width: 100px;
                 border: 0px;
                 background-color: white;
             }
@@ -71,124 +88,124 @@
         <div class="container">
             <table>
                 <tr>
-                    <td class="nametag">PL01</td><td class="status_handler" id="status_pl01">Offline</td><td class="ip_handler" id="ip_pl01"></td>
+                    <td class="ip_handler" id="ip_pl01">N/A</td><td class="status_handler" id="status_pl01">Offline</td><td class="nametag">PL01</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL13</td><td class="status_handler" id="status_pl13">Offline</td><td class="ip_handler" id="ip_pl13"></td>
+                    <td class="nametag">PL13</td><td class="status_handler" id="status_pl13">Offline</td><td class="ip_handler" id="ip_pl13">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl01"></td><td class="time_handler" id="time_pl01"></td>
+                    <td class="time_handler" id="time_pl01">N/A</td><td class="mac_handler" id="mac_pl01">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl13"></td><td class="time_handler" id="time_pl13"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl13">N/A</td><td class="time_handler" id="time_pl13">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL02</td><td class="status_handler" id="status_pl02">Offline</td><td class="ip_handler" id="ip_pl02"></td>
+                    <td class="ip_handler" id="ip_pl02">N/A</td><td class="status_handler" id="status_pl02">Offline</td><td class="nametag">PL02</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL14</td><td class="status_handler" id="status_pl14">Offline</td><td class="ip_handler" id="ip_pl14"></td>
+                    <td class="nametag">PL14</td><td class="status_handler" id="status_pl14">Offline</td><td class="ip_handler" id="ip_pl14">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl02"></td><td class="time_handler" id="time_pl02"></td>
+                    <td class="time_handler" id="time_pl02">N/A</td><td class="mac_handler" id="mac_pl02">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl14"></td><td class="time_handler" id="time_pl14"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl14">N/A</td><td class="time_handler" id="time_pl14">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL03</td><td class="status_handler" id="status_pl03">Offline</td><td class="ip_handler" id="ip_pl03"></td>
+                    <td class="ip_handler" id="ip_pl03">N/A</td><td class="status_handler" id="status_pl03">Offline</td><td class="nametag">PL03</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL15</td><td class="status_handler" id="status_pl15">Offline</td><td class="ip_handler" id="ip_pl15"></td>
+                    <td class="nametag">PL15</td><td class="status_handler" id="status_pl15">Offline</td><td class="ip_handler" id="ip_pl15">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl03"></td><td class="time_handler" id="time_pl03"></td>
+                    <td class="time_handler" id="time_pl03">N/A</td><td class="mac_handler" id="mac_pl03">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl15"></td><td class="time_handler" id="time_pl15"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl15">N/A</td><td class="time_handler" id="time_pl15">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL04</td><td class="status_handler" id="status_pl04">Offline</td><td class="ip_handler" id="ip_pl04"></td>
+                    <td class="ip_handler" id="ip_pl04">N/A</td><td class="status_handler" id="status_pl04">Offline</td><td class="nametag">PL04</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL16</td><td class="status_handler" id="status_pl16">Offline</td><td class="ip_handler" id="ip_pl16"></td>
+                    <td class="nametag">PL16</td><td class="status_handler" id="status_pl16">Offline</td><td class="ip_handler" id="ip_pl16">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl04"></td><td class="time_handler" id="time_pl04"></td>
+                    <td class="time_handler" id="time_pl04">N/A</td><td class="mac_handler" id="mac_pl04">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl16"></td><td class="time_handler" id="time_pl16"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl16">N/A</td><td class="time_handler" id="time_pl16">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL05</td><td class="status_handler" id="status_pl05">Offline</td><td class="ip_handler" id="ip_pl05"></td>
+                    <td class="ip_handler" id="ip_pl05">N/A</td><td class="status_handler" id="status_pl05">Offline</td><td class="nametag">PL05</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL17</td><td class="status_handler" id="status_pl17">Offline</td><td class="ip_handler" id="ip_pl17"></td>
+                    <td class="nametag">PL17</td><td class="status_handler" id="status_pl17">Offline</td><td class="ip_handler" id="ip_pl17">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl05"></td><td class="time_handler" id="time_pl05"></td>
+                    <td class="time_handler" id="time_pl05">N/A</td><td class="mac_handler" id="mac_pl05">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl17"></td><td class="time_handler" id="time_pl17"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl17">N/A</td><td class="time_handler" id="time_pl17">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL06</td><td class="status_handler" id="status_pl06">Offline</td><td class="ip_handler" id="ip_pl06"></td>
+                    <td class="ip_handler" id="ip_pl06">N/A</td><td class="status_handler" id="status_pl06">Offline</td><td class="nametag">PL06</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL18</td><td class="status_handler" id="status_pl18">Offline</td><td class="ip_handler" id="ip_pl18"></td>
+                    <td class="nametag">PL18</td><td class="status_handler" id="status_pl18">Offline</td><td class="ip_handler" id="ip_pl18">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl06"></td><td class="time_handler" id="time_pl06"></td>
+                    <td class="time_handler" id="time_pl06">N/A</td><td class="mac_handler" id="mac_pl06">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl18"></td><td class="time_handler" id="time_pl18"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl18">N/A</td><td class="time_handler" id="time_pl18">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL07</td><td class="status_handler" id="status_pl07">Offline</td><td class="ip_handler" id="ip_pl07"></td>
+                    <td class="ip_handler" id="ip_pl07">N/A</td><td class="status_handler" id="status_pl07">Offline</td><td class="nametag">PL07</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL19</td><td class="status_handler" id="status_pl19">Offline</td><td class="ip_handler" id="ip_pl19"></td>
+                    <td class="nametag">PL19</td><td class="status_handler" id="status_pl19">Offline</td><td class="ip_handler" id="ip_pl19">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl07"></td><td class="time_handler" id="time_pl07"></td>
+                    <td class="time_handler" id="time_pl07">N/A</td><td class="mac_handler" id="mac_pl07">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl19"></td><td class="time_handler" id="time_pl19"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl19">N/A</td><td class="time_handler" id="time_pl19">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL08</td><td class="status_handler" id="status_pl08">Offline</td><td class="ip_handler" id="ip_pl08"></td>
+                    <td class="ip_handler" id="ip_pl08">N/A</td><td class="status_handler" id="status_pl08">Offline</td><td class="nametag">PL08</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL20</td><td class="status_handler" id="status_pl20">Offline</td><td class="ip_handler" id="ip_pl20"></td>
+                    <td class="nametag">PL20</td><td class="status_handler" id="status_pl20">Offline</td><td class="ip_handler" id="ip_pl20">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl08"></td><td class="time_handler" id="time_pl08"></td>
+                    <td class="time_handler" id="time_pl08">N/A</td><td class="mac_handler" id="mac_pl08">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl20"></td><td class="time_handler" id="time_pl20"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl20">N/A</td><td class="time_handler" id="time_pl20">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL09</td><td class="status_handler" id="status_pl09">Offline</td><td class="ip_handler" id="ip_pl09"></td>
+                    <td class="ip_handler" id="ip_pl09">N/A</td><td class="status_handler" id="status_pl09">Offline</td><td class="nametag">PL09</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL21</td><td class="status_handler" id="status_pl21">Offline</td><td class="ip_handler" id="ip_pl21"></td>
+                    <td class="nametag">PL21</td><td class="status_handler" id="status_pl21">Offline</td><td class="ip_handler" id="ip_pl21">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl09"></td><td class="time_handler" id="time_pl09"></td>
+                    <td class="time_handler" id="time_pl09">N/A</td><td class="mac_handler" id="mac_pl09">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl21"></td><td class="time_handler" id="time_pl21"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl21">N/A</td><td class="time_handler" id="time_pl21">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL10</td><td class="status_handler" id="status_pl10">Offline</td><td class="ip_handler" id="ip_pl10"></td>
+                    <td class="ip_handler" id="ip_pl10">N/A</td><td class="status_handler" id="status_pl10">Offline</td><td class="nametag">PL10</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL22</td><td class="status_handler" id="status_pl22">Offline</td><td class="ip_handler" id="ip_pl22"></td>
+                    <td class="nametag">PL22</td><td class="status_handler" id="status_pl22">Offline</td><td class="ip_handler" id="ip_pl22">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl10"></td><td class="time_handler" id="time_pl10"></td>
+                    <td class="time_handler" id="time_pl10">N/A</td><td class="mac_handler" id="mac_pl10">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl22"></td><td class="time_handler" id="time_pl22"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl22">N/A</td><td class="time_handler" id="time_pl22">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL11</td><td class="status_handler" id="status_pl11">Offline</td><td class="ip_handler" id="ip_pl11"></td>
+                    <td class="ip_handler" id="ip_pl11">N/A</td><td class="status_handler" id="status_pl11">Offline</td><td class="nametag">PL11</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL23</td><td class="status_handler" id="status_pl23">Offline</td><td class="ip_handler" id="ip_pl23"></td>
+                    <td class="nametag">PL23</td><td class="status_handler" id="status_pl23">Offline</td><td class="ip_handler" id="ip_pl23">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl11"></td><td class="time_handler" id="time_pl11"></td>
+                    <td class="time_handler" id="time_pl11">N/A</td><td class="mac_handler" id="mac_pl11">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl23"></td><td class="time_handler" id="time_pl23"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl23">N/A</td><td class="time_handler" id="time_pl23">N/A</td>
                 </tr>
                 <tr>
-                    <td class="nametag">PL12</td><td class="status_handler" id="status_pl12">Offline</td><td class="ip_handler" id="ip_pl12"></td>
+                    <td class="ip_handler" id="ip_pl12">N/A</td><td class="status_handler" id="status_pl12">Offline</td><td class="nametag">PL12</td>
                     <td class="spacer"></td>
-                    <td class="nametag">PL24</td><td class="status_handler" id="status_pl24">Offline</td><td class="ip_handler" id="ip_pl24"></td>
+                    <td class="nametag">PL24</td><td class="status_handler" id="status_pl24">Offline</td><td class="ip_handler" id="ip_pl24">N/A</td>
                 </tr>
                 <tr>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl12"></td><td class="time_handler" id="time_pl12"></td>
+                    <td class="mac_handler" id="mac_pl12">N/A</td><td class="time_handler" id="time_pl12">N/A</td><td class="blankcell"></td>
                     <td class="spacer"></td>
-                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl24"></td><td class="time_handler" id="time_pl24"></td>
+                    <td class="blankcell"></td><td class="mac_handler" id="mac_pl24">N/A</td><td class="time_handler" id="time_pl24">N/A</td>
                 </tr>
             </table>
         </div>
@@ -221,15 +238,15 @@
                         timestamp = last_reports[i][5]
                         if(status=="1"){
                             // Running
-                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Running"
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Online"
                             document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#659B3B"
                         }else if(status=="2"){
                             // Idle
-                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Idle"
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Material Shortage"
                             document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#FFBF00"
                         }else if(status=="3"){
                             // Stopped
-                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Stopped"
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Equipment Down"
                             document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "red"
                         }else if(status=="4"){
                             // Offline
@@ -237,7 +254,7 @@
                             document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#569FD4"
                         }
                         document.getElementById("ip_"+devicename.toLowerCase()).innerHTML = ip
-                        document.getElementById("mac_"+devicename.toLowerCase()).innerHTML = mac.toUpperCase()
+                        document.getElementById("mac_"+devicename.toLowerCase()).innerHTML = decodeURIComponent(mac).toUpperCase()
                         document.getElementById("time_"+devicename.toLowerCase()).innerHTML = timestamp
                     }
 
@@ -262,5 +279,49 @@
             xmlhttp.open("GET", window.location.href+"active", true );
             xmlhttp.send();
         }, 500);
+
+        // Iterate through nametags
+        nametag_nodes = document.getElementsByClassName("nametag")
+        for (var i = 0; i < nametag_nodes.length; i++) {
+            nametag_nodes[i].addEventListener('click', changename(nametag_nodes[i].innerHTML))
+        }
+
+        function changename(name){
+            return function(){
+                var curr_name = document.getElementById("mac_"+name.toLowerCase()).innerHTML
+                var new_name = prompt("Please enter new name for Production Line "+name, curr_name)
+                if(curr_name==new_name || new_name=='' || new_name==null){
+                    // Nothing
+                }else{
+                    getRequest("rename?name="+new_name+"&id="+name.toLowerCase())
+                }
+            }
+        }
+
+        function getRequest(destination){
+            if (window.XMLHttpRequest)
+            {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            }
+            else
+            {// code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    var response = xmlhttp.responseText
+                    if(response=="GOOD"){
+                        alert("Production Line has been renamed.");
+                        location.reload()
+                    }else{
+                        alert("Production line failed to rename.")
+                    }
+                }
+            }
+            xmlhttp.open("GET", window.location.href+destination, true );
+            xmlhttp.send();
+        }
     </script>
 </html>

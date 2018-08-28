@@ -6,6 +6,7 @@ import datetime
 import random
 import uuid
 import json
+import os
 
 connections = []
 active_ip = []
@@ -40,7 +41,7 @@ class BroadcastServer():
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(('0.0.0.0', port))
-        print("BROADCAST SERVER on port " + str(port))
+        #print("BROADCAST SERVER on port " + str(port))
     
     def run(self):
         pThread = threading.Thread(target=self.process)
@@ -71,7 +72,7 @@ class Server:
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind(('0.0.0.0', port))
         self.sock.listen(50)
-        print("STREAM SERVER on port "+str(port))
+        #print("STREAM SERVER on port "+str(port))
 
     def handle(self, conn, addr):
         self.lock = threading.Lock()
@@ -97,22 +98,33 @@ class Server:
                 break
             # Receive data from client
             with self.lock:
-                log = addr[0]+","+data
+                log = addr[0]+","+data.decode()
                 # Put Data into the database
                 log_arr = log.split(',')
-                db = mysql.connect(**dbconfig)
-                cursor = db.cursor()
-                cursor.execute(
-                    """INSERT INTO reports (devicename, ip, macaddress, status, datetime) VALUES (%s, %s,%s, %s, %s)""",
-                    (log_arr[1], log_arr[0], log_arr[2], log_arr[3], log_arr[4])
-                )
+                try:
+                    db = mysql.connect(**dbconfig)
+                except:
+                    print("INSERT_DATA: No database connection. Teminating...")
+                    os._exit(0)
+                    time.sleep(2)
+                try:
+                    cursor = db.cursor()
+                    cursor.execute(
+                        """INSERT INTO reports (devicename, ip, macaddress, status, datetime) VALUES (%s, %s,%s, %s, %s)""",
+                        (log_arr[1], log_arr[0], log_arr[2], log_arr[3], log_arr[4])
+                    )
+                except:
+                    print("Database operation failed.")
+                
                 try:
                     db.commit()
                 except:
-                    print("DATABASE: Error occured.")
-                finally:
+                    print("Database operation failed.")
+                try:
                     cursor.close()
                     db.close()
+                except:
+                    pass
 
     def process(self):
         while True:
@@ -130,22 +142,6 @@ class Server:
         proc.daemon = True
         proc.start()
 
-class Hardware:
-    def __init__(self):
-        pass
-
-    def setState(self, pin, value):
-        pass
-    
-    def setMode(self, pin, mode):
-        return 1
-
-    def readState(self, pin):
-        pass
-
-if len(sys.argv)>1:
-    hardware = Hardware()
-
 class Client:
     # Client TCP Connection
     def __init__(self, port):
@@ -159,9 +155,7 @@ class Client:
         self.tCatch = threading.Thread(target=self.ip_catch)
         self.tCatch.daemon = True
         
-
         self.find_server()
-
         transmitter = threading.Thread(target=self.begin_transmission, args=(self.server_ip, port))
         transmitter.daemon = True
         transmitter.start()
@@ -204,6 +198,7 @@ class Client:
                 data, addr = self.udp_sock.recvfrom(512)
                 if data.decode():
                     self.server_ip = addr[0]
+                    print(self.server_ip)
                     break
             except:
                 self.server_ip = ''
@@ -223,20 +218,60 @@ class Client:
 
     def begin_transmission(self, address, port):
         status = 0
+        prev_state = 1
         while True:
-            # Send to server
+            # Check status considering the conditions/rules.
+            # 1 == Green
+            # 2 == Orange
+            # 3 == Red
+            # 4 == Responded
             try:
-                pin_1 = hardware.setMode(1,"OUT")
-                dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-                mac = hex(uuid.getnode())[2:-1]
-                mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
-                self.sock.send(sys.argv[1]+","+mac+","+ str(random.randint(1,3)) +"," +dt)
-                time.sleep(10)
+                light_status = open('status.db', 'r').read()
+                curr_state = int(light_status)
+                changed_state = curr_state!=prev_state
+                if changed_state:
+                    # State has been changed
+                    if prev_state == 1:
+                        # State has change and previous is 1
+                        # Possible current state is 2 or 3
+                        if curr_state == 2:
+                            # Orange LED ON
+                            print("ORANGE LED ON")
+                            prev_state = curr_state
+
+                        if curr_state == 3:
+                            # Red LED ON
+                            print("RED LED ON")
+                            prev_state = curr_state
+
+                    if prev_state == 2 or prev_state == 3:
+                        # State has change and previous is 2 or 3
+                        # Possible current state is 4
+                        if curr_state == 4:
+                            # White LED ON
+                            print("WHITE LED ON")
+                            prev_state = curr_state
+
+                    if (prev_state==2 or prev_state==3 or prev_state==4) and curr_state==1:
+                        print("GREEN LED ON")
+                        prev_state = curr_state
+
+                    # Update server on state change
+                    try:
+                        # This will transmit data to the server
+                        dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+                        mac = hex(uuid.getnode())[2:-1]
+                        mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
+                        self.sock.send(sys.argv[1]+","+mac+","+ str(random.randint(1,3)) +"," +dt)
+                        time.sleep(2)
+                    except:
+                        if status == 0:
+                            status = 1
+                            print("Transmission stopped.")
+
             except:
-                if status == 0:
-                    status = 1
-                    print("Transmission stopped.")
-                
+                pass
+            
 
 class WebServer:
     global mac_active
@@ -286,20 +321,30 @@ class WebServer:
     def get_lastitem(self):
         self.lock = threading.Lock()
         self.lock.acquire()
-        db = mysql.connect(**dbconfig)
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM reports ORDER BY ID DESC LIMIT 1")
-        result = cursor.fetchone()
-        if result:
-            item = result
-        cursor.close()
-        db.close()
         try:
+            db = mysql.connect(**dbconfig)
+        except:
+            print("GET_LASTITEM: No database connection. Teminating...")
+            os._exit(0)
+            time.sleep(2)
+        try:
+            cursor = db.cursor()
+            cursor.execute("SELECT * FROM reports ORDER BY ID DESC LIMIT 1")
+            result = cursor.fetchone()
+            if result:
+                item = result
+        except:
+            print("Database operation failed.")
+        
+        try:
+            cursor.close()
+            db.close()
             self.lock.release()
         except:
             pass
 
     def node_handler(self, conn, addr):
+        global dbconfig
         self.lock = threading.Lock()
         self.lock.acquire()
         last_reports=[]
@@ -313,6 +358,13 @@ class WebServer:
         param = data.split(' ')
         method = param[0]
         request = param[1]
+        with_args = False
+        args = ""
+        if "?" in request:
+            args = request.split('?')[1]
+            request = request.split('?')[0]
+            with_args = True
+
         output = self.get_header(200).encode()
 
         if method == "GET" and request == "/":
@@ -327,17 +379,64 @@ class WebServer:
             for ip_item in active_ip:
                 try:
                     # Get latest log from db
-                    db = mysql.connect(**dbconfig);
-                    cursor = db.cursor();
+                    db = mysql.connect(**dbconfig)
+                except:
+                    print("GET_LATEST_LOG: No database connection. Teminating...")
+                    os._exit(0)
+                    time.sleep(2)
+                try:
+                    cursor = db.cursor()
                     cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item));
-                    result = cursor.fetchone();
+                    result = cursor.fetchone()
+                    cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (result[1]));
+                    name = cursor.fetchone()
+                    if name:
+                        result = list(result)
+                        result[3] = name[2]
                     last_reports.append(result)
-                    cursor.close();
-                    db.close();
+                    cursor.close()
+                    db.close()
                 except Exception as e:
-                    print(e)
+                    print("Database operation failed.", e)
+                
                     
             output += str(json.dumps([active_ip,inactive_ip,last_reports]))
+        elif method == "GET" and request == "/rename":
+            if with_args == True:
+                arr_args = args.split('&')
+                
+                # Get new plname and devicename
+                new_plname = arr_args[0].split('=')[1]
+                devicename = arr_args[1].split('=')[1]
+                try:
+                    db = mysql.connect(**dbconfig)
+                except:
+                    print("GET_LATEST_LOG: No database connection. Teminating...")
+                    os._exit(0)
+                    time.sleep(2)
+                try:
+                    cursor = db.cursor()
+                    cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (devicename))
+                    result = cursor.fetchone()
+                    if result != None:
+                        # Update
+                        cursor.execute ("""UPDATE tbl_plnames SET plname='%s' WHERE devicename='%s' """ % (new_plname, devicename))
+                        output += "GOOD"
+                    else:
+                        # Insert
+                        cursor.execute("INSERT INTO tbl_plnames (devicename, plname) VALUES (%s, %s)", (devicename, new_plname))
+                        output += "GOOD"
+                except:
+                    print("Database operation failed.")
+                try:
+                    db.commit()
+                    cursor.close()
+                    db.close()
+                except:
+                    pass
+            else:
+                output = self.get_header(404).encode()
+                output += "404 Page not found."
         else:
             output = self.get_header(404).encode()
             output += "404 Page not found."
@@ -353,16 +452,11 @@ if len(sys.argv)>1:
     client.run()
 else:
 
-    # Get Web Interface Structure
-    base = open('structure.db', 'rb')
-    base_arr = base.read().split(';')
-    print(json.dumps(base_arr[0])[0])
-    base.close()
     try:
         import mysql.connector as mysql
     except:
         print("Error importing module mysql.connector. Please execute: pip install mysql-connector")
-        exit()
+        os._exit(0)
     _tempsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         # For local network instance
@@ -377,7 +471,6 @@ else:
     server.run()
     broadcastserver = BroadcastServer(lookup_port)
     broadcastserver.run()
-
     # Keep-Alive Loop
     try:
         while True:
