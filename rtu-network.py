@@ -238,7 +238,7 @@ class Client:
                 changed_state = curr_state!=prev_state
                 if changed_state:
                     # State has been changed
-                    print("STATE HAS BEEN CHANGED")
+                    print("STATE HAS BEEN CHANGED: "+curr_state)
 
                     prev_state=curr_state
                     # Update server on state change
