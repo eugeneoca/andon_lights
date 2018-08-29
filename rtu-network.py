@@ -246,7 +246,7 @@ class Client:
 
                     # Convert into numeric representation
                     state_num = 0
-                    if curr_state.strip()=="GREEN":
+                    if curr_state.strip()=="RED":
                         state_num=1
                     elif curr_state.strip()=="ORANGE":
                         state_num=2
