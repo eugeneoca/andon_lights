@@ -248,7 +248,7 @@ class Client:
                     state_num = 0
                     if curr_state.strip()=="RED":
                         state_num=1
-                    elif curr_state.strip()=="ORANGE":
+                    elif curr_state.strip()=="YELLOW":
                         state_num=2
                     elif curr_state.strip()=="GREEN":
                         state_num=3
