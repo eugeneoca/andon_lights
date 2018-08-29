@@ -231,10 +231,10 @@ class Client:
                 # my local:: light_status = open('status.db', 'r').read()
 
                 # RTU
-                light_status = open('/var/txtalert/andon_lights/status.txt', 'r').read()
+                light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
                 # END RTU
 
-                curr_state = light_status
+                curr_state = light_status.read()
                 light_status.close()
                 changed_state = curr_state!=prev_state
                 if changed_state and curr_state!="":
