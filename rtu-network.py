@@ -232,6 +232,7 @@ class Client:
 
                 # RTU
                 light_status = open('/var/txtalert/andon_lights/status.txt', 'r').read()
+                print(light_status)
                 if light_status=="GREEN":
                     light_status=3
                 elif light_status=="ORANGE":
