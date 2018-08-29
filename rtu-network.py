@@ -228,7 +228,12 @@ class Client:
             # 3 == Red
             # 4 == Responded
             try:
-                light_status = open('status.db', 'r').read()
+                # my local:: light_status = open('status.db', 'r').read()
+
+                # RTU
+                light_status = open('/var/txtalert/andon_lights/status.txt', 'r').read()
+                # END RTU
+
                 curr_state = int(light_status)
                 changed_state = curr_state!=prev_state
                 if changed_state:
