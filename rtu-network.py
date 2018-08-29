@@ -220,7 +220,7 @@ class Client:
 
     def begin_transmission(self, address, port):
         status = "GREEN\n"
-        prev_state = 1
+        prev_state = "GREEN\n"
         while True:
             # Check status considering the conditions/rules.
             # 1 == RED
@@ -234,7 +234,7 @@ class Client:
                 light_status = open('/var/txtalert/andon_lights/status.txt', 'r').read()
                 # END RTU
 
-                curr_state = int(light_status)
+                curr_state = light_status
                 changed_state = curr_state!=prev_state
                 if changed_state:
                     # State has been changed
