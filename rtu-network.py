@@ -238,7 +238,9 @@ class Client:
                 changed_state = curr_state!=prev_state
                 if changed_state:
                     # State has been changed
-                    print("STATE HAS BEE CHANGED")
+                    print("STATE HAS BEEN CHANGED")
+
+                    prev_state=curr_state
                     # Update server on state change
                     try:
                         # This will transmit data to the server
