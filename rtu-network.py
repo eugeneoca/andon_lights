@@ -8,7 +8,7 @@ import uuid
 import json
 import os
 #import npyscreen # For Console GUI
-from fpdf import FPDF # For PDF Generation
+#from fpdf import FPDF # For PDF Generation
 
 connections = []
 active_ip = []
