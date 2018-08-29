@@ -223,10 +223,10 @@ class Client:
         prev_state = "GREEN\n"
         while True:
             # Check status considering the conditions/rules.
-            # 1 == RED
-            # 2 == ORANGE
-            # 3 == GREEN
-            # 4 == RESPONDED
+            # 1 == RED      Equipment Downtime
+            # 2 == ORANGE   Material Shortage
+            # 3 == GREEN    Running
+            # 4 == WHITE    Responded
             try:
                 # my local:: light_status = open('status.db', 'r').read()
 
@@ -242,6 +242,20 @@ class Client:
 
                     prev_state=curr_state
                     # Update server on state change
+
+                    # Convert into numeric representation
+                    state_num = 0
+                    if curr_state.strip()=="GREEN":
+                        state_num=1
+                    elif curr_state.strip()=="ORANGE":
+                        state_num=2
+                    elif curr_state.strip()=="GREEN":
+                        state_num=3
+                    elif  curr_state.strip()=="WHITE":
+                        state_num=4
+                    else:
+                        state_num=1
+
                     try:
                         # This will transmit data to the server
                         dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
