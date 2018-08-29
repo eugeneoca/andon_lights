@@ -229,10 +229,10 @@ class Client:
             # 4 == WHITE    Responded
             try:
                 # my local
-                light_status = open('status.db', 'r')
+                #light_status = open('status.db', 'r')
 
                 # RTU
-                #light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
+                light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
                 # END RTU
 
                 curr_state = light_status.read().strip()
