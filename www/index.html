@@ -2,6 +2,10 @@
 <html>
     <head>
         <title>EATON | ANDON LIGHTS NETWORK</title>
+  
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <style>
             html, body{
                 margin: 0px auto;
@@ -83,17 +87,49 @@
                 padding: 0px;
             }
         </style>
+        <script>
+
+ 
+
+  </script>
+        </script>
     </head>
     <body>
+
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Details</h4>
+        </div>
+        <div class="modal-body">
+          <p></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+        </div>
+  </div>
+
+
         <div class="container">
             <table>
                 <tr>
                     <td class="ip_handler" id="ip_pl01">N/A</td><td class="status_handler" id="status_pl01">Offline</td><td class="nametag">PL01</td>
-                    <td class="spacer"></td>
+                    
+                        <td class="spacer"></td>
                     <td class="nametag">PL13</td><td class="status_handler" id="status_pl13">Offline</td><td class="ip_handler" id="ip_pl13">N/A</td>
                 </tr>
                 <tr>
-                    <td class="time_handler" id="time_pl01">N/A</td><td class="mac_handler" id="mac_pl01">N/A</td><td class="blankcell"></td>
+                    <td class="time_handler" id="time_pl01">N/A</td><td class="mac_handler" id="mac_pl01">N/A</td><td class="blankcell">
+                  <a  data-toggle="modal" data-target="#myModal">Open Modal</a>
                     <td class="spacer"></td>
                     <td class="blankcell"></td><td class="mac_handler" id="mac_pl13">N/A</td><td class="time_handler" id="time_pl13">N/A</td>
                 </tr>
