@@ -235,6 +235,7 @@ class Client:
                 # END RTU
 
                 curr_state = light_status
+                light_status.close()
                 changed_state = curr_state!=prev_state
                 if changed_state and curr_state!="":
                     # State has been changed
