@@ -219,8 +219,8 @@ class Client:
                     break
 
     def begin_transmission(self, address, port):
-        status = "GREEN\n"
-        prev_state = "GREEN\n"
+        status = "GREEN"
+        prev_state = "GREEN"
         while True:
             # Check status considering the conditions/rules.
             # 1 == RED      Equipment Downtime
@@ -228,13 +228,14 @@ class Client:
             # 3 == GREEN    Running
             # 4 == WHITE    Responded
             try:
-                # my local:: light_status = open('status.db', 'r').read()
+                # my local
+                light_status = open('status.db', 'r')
 
                 # RTU
-                light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
+                #light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
                 # END RTU
 
-                curr_state = light_status.read()
+                curr_state = light_status.read().strip()
                 light_status.close()
                 changed_state = curr_state!=prev_state
                 if changed_state and curr_state!="":
