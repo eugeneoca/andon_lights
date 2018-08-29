@@ -219,7 +219,7 @@ class Client:
                     break
 
     def begin_transmission(self, address, port):
-        status = 0
+        status = "GREEN\n"
         prev_state = 1
         while True:
             # Check status considering the conditions/rules.
@@ -232,48 +232,13 @@ class Client:
 
                 # RTU
                 light_status = open('/var/txtalert/andon_lights/status.txt', 'r').read()
-                print(light_status)
-                if light_status=="GREEN":
-                    light_status=3
-                elif light_status=="ORANGE":
-                    light_status=2
-                elif light_status=="RED":
-                    light_status=1
-                elif light_status=="WHITE":
-                    light_status=4
-                else:
-                    light_status=3
                 # END RTU
 
                 curr_state = int(light_status)
                 changed_state = curr_state!=prev_state
                 if changed_state:
                     # State has been changed
-                    if prev_state == 1:
-                        # State has change and previous is 1
-                        # Possible current state is 2 or 3
-                        if curr_state == 2:
-                            # Orange LED ON
-                            print("ORANGE LED ON")
-                            prev_state = curr_state
-
-                        if curr_state == 3:
-                            # Red LED ON
-                            print("RED LED ON")
-                            prev_state = curr_state
-
-                    if prev_state == 2 or prev_state == 3:
-                        # State has change and previous is 2 or 3
-                        # Possible current state is 4
-                        if curr_state == 4:
-                            # White LED ON
-                            print("WHITE LED ON")
-                            prev_state = curr_state
-
-                    if (prev_state==2 or prev_state==3 or prev_state==4) and curr_state==1:
-                        print("GREEN LED ON")
-                        prev_state = curr_state
-
+                    print("STATE HAS BEE CHANGED")
                     # Update server on state change
                     try:
                         # This will transmit data to the server
