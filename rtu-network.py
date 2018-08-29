@@ -119,7 +119,7 @@ class Server:
 
                     # Issue Block
                     print("This is issue block", log_arr[1], log_arr[0], log_arr[2], log_arr[3], log_arr[4])
-
+                    
                 except:
                     print("Database operation failed.")
                 try:

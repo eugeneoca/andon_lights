@@ -1,0 +1,20 @@
+ID
+Machine ID
+Issue ID
+Status
+REMARKS
+
+Example:
+
+ID	Machine ID	Issue ID		Status		Remarks
+1	PL01		PL01-32229082018	RED		OPEN
+2	PL01		PL01-32229082018	WHITE		OPEN
+3	PL01		PL01-32229082018	GREEN		CLOSED
+4	PL02		PL02-32229082090	RED		OPEN
+5	PL02		PL02-32229082090	WHITE		OPEN
+6	PL02		PL02-32229082090	GREEN		CLOSED
+
+@Issue Block
+1. Check if current reference ID is still active.
+2. If not exist, just insert.
+3. If exist, use same reference ID then evaluate.
