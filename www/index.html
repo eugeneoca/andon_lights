@@ -266,20 +266,20 @@
                         status = last_reports[i][4]
                         timestamp = last_reports[i][5]
                         if(status=="1"){
-                            // Running
-                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Online"
-                            document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#659B3B"
+                            // Equipment Down
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Equipment Down"
+                            document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "red"
                         }else if(status=="2"){
-                            // Idle
+                            // Material Shortage
                             document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Material Shortage"
                             document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#FFBF00"
                         }else if(status=="3"){
-                            // Stopped
-                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Equipment Down"
-                            document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "red"
+                            // Running
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Running"
+                            document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#659B3B"
                         }else if(status=="4"){
-                            // Offline
-                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "Offline"
+                            // Responded
+                            document.getElementById("status_"+devicename.toLowerCase()).innerHTML = "RESPONDED"
                             document.getElementById("status_"+devicename.toLowerCase()).style.backgroundColor = "#569FD4"
                         }
                         document.getElementById("ip_"+devicename.toLowerCase()).innerHTML = ip

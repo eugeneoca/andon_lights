@@ -115,11 +115,11 @@ class Server:
                         """INSERT INTO reports (devicename, ip, macaddress, status, datetime) VALUES (%s, %s,%s, %s, %s)""",
                         (log_arr[1], log_arr[0], log_arr[2], log_arr[3], log_arr[4])
                     )
-                except:
-                    print("Database operation failed.")
-                
-                try:
                     db.commit()
+
+                    # Issue Block
+                    print("This is issue block", log_arr[1], log_arr[0], log_arr[2], log_arr[3], log_arr[4])
+
                 except:
                     print("Database operation failed.")
                 try:
@@ -338,7 +338,6 @@ class WebServer:
                 item = result
         except:
             print("Database operation failed.")
-        
         try:
             cursor.close()
             db.close()
