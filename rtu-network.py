@@ -261,7 +261,7 @@ class Client:
                         dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
                         mac = hex(uuid.getnode())[2:-1]
                         mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
-                        self.sock.send(sys.argv[1]+","+mac+","+ str(curr_state) +"," +dt)
+                        self.sock.send(sys.argv[1]+","+mac+","+ str(state_num) +"," +dt)
                         #time.sleep(2)
                     except:
                         if status == 0:
