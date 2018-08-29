@@ -118,8 +118,12 @@ class Server:
                     db.commit()
 
                     # Issue Block
-                    print("This is issue block", log_arr[1], log_arr[0], log_arr[2], log_arr[3], log_arr[4])
-                    
+                    #print("This is issue block", log_arr)
+                    cursor.execute(
+                        """INSERT INTO tbl_events (eventid, devicename, macaddress, datetime, remarks) VALUES (%s, %s,%s, %s, %s)""",
+                        (log_arr[5], log_arr[1], log_arr[2], log_arr[4], log_arr[6])
+                    )
+                    db.commit()
                 except:
                     print("Database operation failed.")
                 try:
@@ -229,10 +233,11 @@ class Client:
             # 4 == WHITE    Responded
             try:
                 # my local
-                #light_status = open('status.db', 'r')
+                light_status = open('status.db', 'r')
+                self.dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
                 # RTU
-                light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
+                #light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
                 # END RTU
 
                 curr_state = light_status.read().strip()
@@ -241,6 +246,16 @@ class Client:
                 if changed_state and curr_state!="":
                     # State has been changed
                     print("STATE HAS BEEN CHANGED: "+curr_state.strip())
+
+                    # Event ID
+                    if prev_state=="GREEN":
+                        # When state has changed from green, Generate new reference ID
+                        self.eventID = sys.argv[1].upper()+"-"+self.dt.replace("-","").replace(":","").replace(" ","")
+                        self.eventID = self.eventID
+                        self.remarks = "OPEN"
+
+                    if prev_state=="WHITE":
+                        self.remarks = "CLOSED"
 
                     prev_state=curr_state
                     # Update server on state change
@@ -260,11 +275,10 @@ class Client:
 
                     try:
                         # This will transmit data to the server
-                        dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
                         mac = hex(uuid.getnode())[2:-1]
                         mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
-                        self.sock.send(sys.argv[1]+","+mac+","+ str(state_num) +"," +dt)
-                        print(sys.argv[1]+","+mac+","+ str(state_num) +"," +dt)
+                        self.sock.send(sys.argv[1]+","+mac+","+ str(state_num) +"," +self.dt+","+self.eventID+","+self.remarks)
+                        #print(sys.argv[1]+","+mac+","+ str(state_num) +"," +self.dt+","+self.eventID+","+self.remarks)
                         #time.sleep(2)
                     except:
                         if status == 0:
@@ -378,28 +392,29 @@ class WebServer:
             time_now = datetime.datetime.now()
             date_format = "%Y-%m-%d %H:%M:%S"
             threading.Thread(target=self.get_lastitem).start()
-            for ip_item in active_ip:
-                try:
-                    # Get latest log from db
-                    db = mysql.connect(**dbconfig)
-                except:
-                    print("GET_LATEST_LOG: No database connection. Teminating...")
-                    os._exit(0)
-                    time.sleep(2)
-                try:
-                    cursor = db.cursor()
-                    cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item))
-                    result = cursor.fetchone()
-                    cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (result[1]))
-                    name = cursor.fetchone()
-                    if name:
-                        result = list(result)
-                        result[3] = name[2]
-                    last_reports.append(result)
-                    cursor.close()
-                    db.close()
-                except Exception as e:
-                    print("Database operation failed.", e)
+            if active_ip!="":
+                for ip_item in active_ip:
+                    try:
+                        # Get latest log from db
+                        db = mysql.connect(**dbconfig)
+                    except:
+                        print("GET_LATEST_LOG: No database connection. Teminating...")
+                        os._exit(0)
+                        time.sleep(2)
+                    try:
+                        cursor = db.cursor()
+                        cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item))
+                        result = cursor.fetchone()
+                        cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (result[1]))
+                        name = cursor.fetchone()
+                        if name:
+                            result = list(result)
+                            result[3] = name[2]
+                        last_reports.append(result)
+                        cursor.close()
+                        db.close()
+                    except Exception as e:
+                        print("Database operation failed.", e)
                 
                     
             output += str(json.dumps([active_ip,inactive_ip,last_reports]))
@@ -439,6 +454,12 @@ class WebServer:
             else:
                 output = self.get_header(404).encode()
                 output += "404 Page not found."
+
+        elif method=="GET" and request == "/reports":
+            indexpath = self.root_dir + "/reports.html"
+            f = open(indexpath, 'rb')
+            output += f.read()
+            f.close()
         else:
             output = self.get_header(404).encode()
             output += "404 Page not found."
