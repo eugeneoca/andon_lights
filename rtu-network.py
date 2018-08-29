@@ -236,7 +236,7 @@ class Client:
 
                 curr_state = light_status
                 changed_state = curr_state!=prev_state
-                if changed_state:
+                if changed_state and curr_state:
                     # State has been changed
                     print("STATE HAS BEEN CHANGED: "+curr_state)
 
