@@ -262,7 +262,7 @@ class Client:
                         mac = hex(uuid.getnode())[2:-1]
                         mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
                         self.sock.send(sys.argv[1]+","+mac+","+ str(curr_state) +"," +dt)
-                        time.sleep(2)
+                        #time.sleep(2)
                     except:
                         if status == 0:
                             status = 1
