@@ -223,15 +223,25 @@ class Client:
         prev_state = 1
         while True:
             # Check status considering the conditions/rules.
-            # 1 == Green
-            # 2 == Orange
-            # 3 == Red
-            # 4 == Responded
+            # 1 == RED
+            # 2 == ORANGE
+            # 3 == GREEN
+            # 4 == RESPONDED
             try:
                 # my local:: light_status = open('status.db', 'r').read()
 
                 # RTU
                 light_status = open('/var/txtalert/andon_lights/status.txt', 'r').read()
+                if light_status=="GREEN":
+                    light_status=3
+                elif light_status=="ORANGE":
+                    light_status=2
+                elif light_status=="RED":
+                    light_status=1
+                elif light_status=="WHITE":
+                    light_status=4
+                else:
+                    light_status=3
                 # END RTU
 
                 curr_state = int(light_status)
