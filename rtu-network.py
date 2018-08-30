@@ -388,6 +388,7 @@ class WebServer:
             f = open(indexpath, 'rb')
             output += f.read()
             f.close()
+
         elif method == "GET" and request == "/active":
             time_now = datetime.datetime.now()
             date_format = "%Y-%m-%d %H:%M:%S"
@@ -418,6 +419,48 @@ class WebServer:
                 
                     
             output += str(json.dumps([active_ip,inactive_ip,last_reports]))
+
+
+
+
+        elif method == "GET" and request == "/date":
+            if with_args == True:
+                arr_args = args.split('&')
+                
+                # Get new plname and devicename
+                startD = arr_args[0].split('=')[1]
+                toD = arr_args[1].split('=')[1]
+                startD = startD.replace("%20"," ");
+                toD = toD.replace("%20"," ");
+                
+            arr = []
+            threading.Thread(target=self.get_lastitem).start()
+            try:
+                        # Get latest log from db
+                    db = mysql.connect(**dbconfig)
+            except:
+                        print("GET_LATEST_LOG: No database connection. Teminating...")
+                        os._exit(0)
+                        time.sleep(2)
+            try:
+                        cursor = db.cursor()
+                        cursor.execute("SELECT * FROM tbl_events WHERE  datetime>'%s' and datetime<'%s' ORDER BY ID DESC" % (startD,toD))
+                        result = cursor.fetchall()
+                        print(startD)
+                        for itm in result:
+                            arr.append({"rid":itm[1],"mid":itm[2]})
+                          
+                        cursor.close()
+                        db.close()
+            except Exception as e:
+                        print("Database operation failed.", e)
+                
+                    
+            output += str(json.dumps(arr))
+
+
+
+
         elif method == "GET" and request == "/rename":
             if with_args == True:
                 arr_args = args.split('&')
