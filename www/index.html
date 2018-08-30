@@ -93,6 +93,11 @@
      
             document.getElementById("display").innerHTML = '<form action="/action_page.php">Start:<input type="date" name="bday"></td><td>To:<input type="date" name="bday"><input type="submit"></td></form>';
         }
+        
+        function displayRID(){
+     
+            document.getElementById("display").innerHTML = '<form action="/action_page.php">Search:<input type="text" name="bday"><input type="submit" value="Search"></form>';
+        }
  
 
   </script>
@@ -120,7 +125,7 @@
   <span class="caret"></span></button>
   <ul class="dropdown-menu">
     <li><a href="javascript:displayNow();">Date</a></li>
-    <li><a href="#">ID</a></li>
+    <li><a href="javascript:displayRID();">Reference ID</a></li>
     <li><a href="#"></a></li>
   </ul>
 </div>
