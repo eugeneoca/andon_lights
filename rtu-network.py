@@ -444,7 +444,7 @@ class WebServer:
                         time.sleep(2)
             try:
                         cursor = db.cursor()
-                        cursor.execute("SELECT * FROM tbl_events WHERE  datetime>'%s' and datetime<'%s' ORDER BY ID DESC" % (startD,toD))
+                        cursor.execute("SELECT * FROM reports WHERE  datetime>'%s' and datetime<'%s' and status='3' ORDER BY ID DESC" % (startD,toD))
                         result = cursor.fetchall()
                         print(startD)
                         for itm in result:
@@ -458,7 +458,40 @@ class WebServer:
                     
             output += str(json.dumps(arr))
 
+        
 
+
+           elif method == "GET" and request == "/summary":
+            if with_args == True:
+                arr_args = args.split('&')
+                
+                # Get new plname and devicename
+                id = arr_args[0].split('=')[1]
+                #toD = arr_args[1].split('=')[1]
+             
+                
+            arr = []
+            threading.Thread(target=self.get_lastitem).start()
+            try:
+                        # Get latest log from db
+                    db = mysql.connect(**dbconfig)
+            except:
+                        print("GET_LATEST_LOG: No database connection. Teminating...")
+                        os._exit(0)
+                        time.sleep(2)
+            try:
+                        cursor = db.cursor()
+                        cursor.execute("SELECT * FROM reports WHERE id='%s' " % (id))
+                        result = cursor.fetchone()
+
+                          
+                        cursor.close()
+                        db.close()
+            except Exception as e:
+                        print("Database operation failed.", e)
+                
+                    
+            output += str(json.dumps(arr))        
 
 
         elif method == "GET" and request == "/rename":

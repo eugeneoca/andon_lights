@@ -43,12 +43,16 @@
         
     }    
 
-tble += '</tbody></table>';
+    tble += '</tbody></table>';
 
     document.getElementById("display").innerHTML = tble;
     
         }
 
+
+        function show(){
+            $("#myModal").modal('show');
+        }
 
 
 
@@ -63,7 +67,7 @@ tble += '</tbody></table>';
 
 
     	<h1>EATON <small class="text-muted">ANDON LIGHTS NETWORK</small></h1>
-    	<hr/>
+    	<hr/><a href="javascript:show();">Summary</a>
     	<div class="row">
     		<div class="col-sm-3">
     			<div class="input-group mb-3">
@@ -108,7 +112,43 @@ tble += '</tbody></table>';
           <h4 class="modal-title">Summary</h4>
         </div>
         <div class="modal-body">
-          <p>This is a large modal.</p>
+   
+   
+   
+      <table class="table">
+    <thead>
+      <tr>
+        <th>Macine Id</th>
+        <th></th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Response time</td>
+        <td></td>
+
+      </tr>
+      <tr>
+        <td>Repair time</td>
+        <td></td>
+    
+      </tr>
+      <tr>
+        <td>Down time:</td>
+        <td></td>
+   
+      </tr>
+<tr>
+        <td>Descriptionh:</td>
+        <td></td>
+   
+      </tr>
+
+      
+
+    </tbody>
+  </table>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
