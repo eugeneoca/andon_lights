@@ -2,11 +2,11 @@ import socket
 import threading
 import sys
 import time
-import datetime
 import random
 import uuid
 import json
 import os
+import datetime as dt
 #import npyscreen # For Console GUI
 #from fpdf import FPDF # For PDF Generation
 
@@ -115,10 +115,14 @@ class Server:
                         """INSERT INTO reports (devicename, ip, macaddress, status, datetime) VALUES (%s, %s,%s, %s, %s)""",
                         (log_arr[1], log_arr[0], log_arr[2], log_arr[3], log_arr[4])
                     )
-                except:
-                    print("Database operation failed.")
-                
-                try:
+                    db.commit()
+
+                    # Issue Block
+                    #print("This is issue block", log_arr)
+                    cursor.execute(
+                        """INSERT INTO tbl_events (eventid, devicename, macaddress, datetime, remarks) VALUES (%s, %s,%s, %s, %s)""",
+                        (log_arr[5], log_arr[1], log_arr[2], log_arr[4], log_arr[6])
+                    )
                     db.commit()
                 except:
                     print("Database operation failed.")
@@ -219,53 +223,63 @@ class Client:
                     break
 
     def begin_transmission(self, address, port):
-        status = 0
-        prev_state = 1
+        status = "GREEN"
+        prev_state = "GREEN"
         while True:
             # Check status considering the conditions/rules.
-            # 1 == Green
-            # 2 == Orange
-            # 3 == Red
-            # 4 == Responded
+            # 1 == RED      Equipment Downtime
+            # 2 == ORANGE   Material Shortage
+            # 3 == GREEN    Running
+            # 4 == WHITE    Responded
             try:
-                light_status = open('status.db', 'r').read()
-                curr_state = int(light_status)
+                # my local
+                light_status = open('status.db', 'r')
+                self.dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+
+                # RTU
+                #light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
+                # END RTU
+
+                curr_state = light_status.read().strip()
+                light_status.close()
                 changed_state = curr_state!=prev_state
-                if changed_state:
+                if changed_state and curr_state!="":
                     # State has been changed
-                    if prev_state == 1:
-                        # State has change and previous is 1
-                        # Possible current state is 2 or 3
-                        if curr_state == 2:
-                            # Orange LED ON
-                            print("ORANGE LED ON")
-                            prev_state = curr_state
+                    print("STATE HAS BEEN CHANGED: "+curr_state.strip())
 
-                        if curr_state == 3:
-                            # Red LED ON
-                            print("RED LED ON")
-                            prev_state = curr_state
+                    # Event ID
+                    if prev_state=="GREEN":
+                        # When state has changed from green, Generate new reference ID
+                        self.eventID = sys.argv[1].upper()+"-"+self.dt.replace("-","").replace(":","").replace(" ","")
+                        self.eventID = self.eventID
+                        self.remarks = "OPEN"
 
-                    if prev_state == 2 or prev_state == 3:
-                        # State has change and previous is 2 or 3
-                        # Possible current state is 4
-                        if curr_state == 4:
-                            # White LED ON
-                            print("WHITE LED ON")
-                            prev_state = curr_state
+                    if prev_state=="WHITE":
+                        self.remarks = "CLOSED"
 
-                    if (prev_state==2 or prev_state==3 or prev_state==4) and curr_state==1:
-                        print("GREEN LED ON")
-                        prev_state = curr_state
-
+                    prev_state=curr_state
                     # Update server on state change
+
+                    # Convert into numeric representation
+                    state_num = 0
+                    if curr_state.strip()=="RED":
+                        state_num=1
+                    elif curr_state.strip()=="YELLOW":
+                        state_num=2
+                    elif curr_state.strip()=="GREEN":
+                        state_num=3
+                    elif  curr_state.strip()=="WHITE":
+                        state_num=4
+                    else:
+                        state_num=1
+
                     try:
                         # This will transmit data to the server
-                        dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
                         mac = hex(uuid.getnode())[2:-1]
                         mac = ':'.join(a+b for a,b in zip(mac[::2], mac[1::2]))
-                        self.sock.send(sys.argv[1]+","+mac+","+ str(curr_state) +"," +dt)
-                        time.sleep(2)
+                        self.sock.send(sys.argv[1]+","+mac+","+ str(state_num) +"," +self.dt+","+self.eventID+","+self.remarks)
+                        #print(sys.argv[1]+","+mac+","+ str(state_num) +"," +self.dt+","+self.eventID+","+self.remarks)
+                        #time.sleep(2)
                     except:
                         if status == 0:
                             status = 1
@@ -338,7 +352,6 @@ class WebServer:
                 item = result
         except:
             print("Database operation failed.")
-        
         try:
             cursor.close()
             db.close()
@@ -375,35 +388,177 @@ class WebServer:
             f = open(indexpath, 'rb')
             output += f.read()
             f.close()
+
         elif method == "GET" and request == "/active":
             time_now = datetime.datetime.now()
             date_format = "%Y-%m-%d %H:%M:%S"
             threading.Thread(target=self.get_lastitem).start()
-            for ip_item in active_ip:
-                try:
-                    # Get latest log from db
-                    db = mysql.connect(**dbconfig)
-                except:
-                    print("GET_LATEST_LOG: No database connection. Teminating...")
-                    os._exit(0)
-                    time.sleep(2)
-                try:
-                    cursor = db.cursor()
-                    cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item))
-                    result = cursor.fetchone()
-                    cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (result[1]))
-                    name = cursor.fetchone()
-                    if name:
-                        result = list(result)
-                        result[3] = name[2]
-                    last_reports.append(result)
-                    cursor.close()
-                    db.close()
-                except Exception as e:
-                    print("Database operation failed.", e)
+            if active_ip!="":
+                for ip_item in active_ip:
+                    try:
+                        # Get latest log from db
+                        db = mysql.connect(**dbconfig)
+                    except:
+                        print("GET_LATEST_LOG: No database connection. Teminating...")
+                        os._exit(0)
+                        time.sleep(2)
+                    try:
+                        cursor = db.cursor()
+                        cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item))
+                        result = cursor.fetchone()
+                        cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (result[1]))
+                        name = cursor.fetchone()
+                        if name:
+                            result = list(result)
+                            result[3] = name[2]
+                        last_reports.append(result)
+                        cursor.close()
+                        db.close()
+                    except Exception as e:
+                        print("Database operation failed.", e)
                 
                     
             output += str(json.dumps([active_ip,inactive_ip,last_reports]))
+
+
+
+
+        elif method == "GET" and request == "/date":
+            if with_args == True:
+                arr_args = args.split('&')
+                
+                # Get new plname and devicename
+                startD = arr_args[0].split('=')[1]
+                toD = arr_args[1].split('=')[1]
+                startD = startD.replace("%20"," ");
+                toD = toD.replace("%20"," ");
+                
+            arr = []
+            threading.Thread(target=self.get_lastitem).start()
+            try:
+                        # Get latest log from db
+                    db = mysql.connect(**dbconfig)
+            except:
+                        print("GET_LATEST_LOG: No database connection. Teminating...")
+                        os._exit(0)
+                        time.sleep(2)
+            try:
+                        cursor = db.cursor()
+                        cursor.execute("SELECT * FROM reports WHERE  datetime>'%s' and datetime<'%s' and status='3' ORDER BY ID DESC" % (startD,toD))
+                        result = cursor.fetchall()
+                        print(startD)
+                        for itm in result:
+                            arr.append({"rid":itm[1],"mid":itm[2]})
+                          
+                        cursor.close()
+                        db.close()
+            except Exception as e:
+                        print("Database operation failed.", e)
+                
+                    
+            output += str(json.dumps(arr))
+
+        
+
+
+        elif method == "GET" and request == "/summary":
+            if with_args == True:
+                arr_args = args.split('&')
+                
+                # Get new plname and devicename
+                id = arr_args[0].split('=')[1]
+                #toD = arr_args[1].split('=')[1]
+             
+                
+            arr = []
+            threading.Thread(target=self.get_lastitem).start()
+            try:
+                        # Get latest log from db
+                db = mysql.connect(**dbconfig)
+            except:
+                print("GET_LATEST_LOG: No database connection. Teminating...")
+                os._exit(0)
+                time.sleep(2)
+			
+            try:
+				cursor = db.cursor()
+				cursor.execute("SELECT * FROM reports WHERE id='%s' " % (id))
+				result = cursor.fetchone()
+				
+				
+				id = int(id)+1
+				
+			
+				start=result[5].split(' ')[1]
+				start1 = start
+				responseTime = 0
+				repairTime = 0
+				downTime = 0
+			
+				
+				cursor.execute("SELECT * FROM reports WHERE id='%s' " % (id))
+				result = cursor.fetchone()
+				end=result[5].split(' ')[1]
+				
+			
+				
+				if result[4] =="4":
+					
+					start_dt = dt.datetime.strptime(start, '%H:%M:%S')
+					end_dt = dt.datetime.strptime(end, '%H:%M:%S')
+					diff = (end_dt - start_dt)
+					if diff.seconds >=60:
+						responseTime = str(diff.seconds/60)+" m"
+					else:
+						responseTime = str(diff.seconds)+" s"
+						
+				
+				
+				id = int(id)+1
+				start = end
+				
+				cursor.execute("SELECT * FROM reports WHERE id='%s' " % (id))
+				result = cursor.fetchone()
+				end=result[5].split(' ')[1]
+				
+			
+				
+				if result[4] =="3":
+					
+					start_dt = dt.datetime.strptime(start, '%H:%M:%S')
+					end_dt = dt.datetime.strptime(end, '%H:%M:%S')
+					diff = (end_dt - start_dt)
+					if diff.seconds >=60:
+						repairTime = str(diff.seconds/60)+" m"
+					else:
+						repairTime = str(diff.seconds)+" s"
+						
+					
+				start_dt = dt.datetime.strptime(start1, '%H:%M:%S')
+				end_dt = dt.datetime.strptime(end, '%H:%M:%S')
+				diff = (end_dt - start_dt)
+				if diff.seconds >=60:
+					downTime = str(diff.seconds/60)+" m"
+				else:
+					downTime = str(diff.seconds)+" s"
+						
+					
+				
+				arr.append({"responseTime":responseTime,"repairTime":repairTime,"downTime":downTime});
+					
+					
+					
+					
+				cursor.close() 
+				db.close()
+					
+            except Exception as e:
+                        print("Database operation failed.", e)
+                
+                    
+            output += str(json.dumps(arr))        
+
+
         elif method == "GET" and request == "/rename":
             if with_args == True:
                 arr_args = args.split('&')
@@ -440,6 +595,12 @@ class WebServer:
             else:
                 output = self.get_header(404).encode()
                 output += "404 Page not found."
+
+        elif method=="GET" and request == "/reports":
+            indexpath = self.root_dir + "/reports.html"
+            f = open(indexpath, 'rb')
+            output += f.read()
+            f.close()
         else:
             output = self.get_header(404).encode()
             output += "404 Page not found."
