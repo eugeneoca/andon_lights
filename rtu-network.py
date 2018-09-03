@@ -421,79 +421,64 @@ class WebServer:
             output += str(json.dumps([active_ip,inactive_ip,last_reports]))
 
 
-
-
         elif method == "GET" and request == "/date":
             if with_args == True:
                 arr_args = args.split('&')
-                
+
                 # Get new plname and devicename
                 startD = arr_args[0].split('=')[1]
                 toD = arr_args[1].split('=')[1]
                 startD = startD.replace("%20"," ");
                 toD = toD.replace("%20"," ");
-                
+
             arr = []
             threading.Thread(target=self.get_lastitem).start()
             try:
-                        # Get latest log from db
-                    db = mysql.connect(**dbconfig)
+                # Get latest log from db
+                db = mysql.connect(**dbconfig)
             except:
-                        print("GET_LATEST_LOG: No database connection. Teminating...")
-                        os._exit(0)
-                        time.sleep(2)
+                print("GET_LATEST_LOG: No database connection. Teminating...")
+                os._exit(0)
+                time.sleep(2)
             try:
-                        cursor = db.cursor()
-                        cursor.execute("SELECT * FROM reports WHERE  datetime>'%s' and datetime<'%s' and status='3' ORDER BY ID DESC" % (startD,toD))
-                        result = cursor.fetchall()
-                        print(startD)
-                        for itm in result:
-                            arr.append({"rid":itm[1],"mid":itm[2]})
-                          
-                        cursor.close()
-                        db.close()
+                cursor = db.cursor()
+                cursor.execute("SELECT * FROM reports WHERE  datetime>'%s' and datetime<'%s' and status='3' ORDER BY ID DESC" % (startD,toD))
+                result = cursor.fetchall()
+                print(startD)
+                for itm in result:
+                    arr.append({"rid":itm[1],"mid":itm[2]})
+                    cursor.close()
+                    db.close()
             except Exception as e:
-                        print("Database operation failed.", e)
-                
-                    
+                print("Database operation failed.", e)
             output += str(json.dumps(arr))
 
-        
-
-
-           elif method == "GET" and request == "/summary":
+        elif method == "GET" and request == "/summary":
             if with_args == True:
                 arr_args = args.split('&')
-                
+
                 # Get new plname and devicename
                 id = arr_args[0].split('=')[1]
                 #toD = arr_args[1].split('=')[1]
-             
-                
             arr = []
             threading.Thread(target=self.get_lastitem).start()
             try:
-                        # Get latest log from db
-                    db = mysql.connect(**dbconfig)
+                # Get latest log from db
+                db = mysql.connect(**dbconfig)
             except:
-                        print("GET_LATEST_LOG: No database connection. Teminating...")
-                        os._exit(0)
-                        time.sleep(2)
+                print("GET_LATEST_LOG: No database connection. Teminating...")
+                os._exit(0)
+                time.sleep(2)
             try:
-                        cursor = db.cursor()
-                        cursor.execute("SELECT * FROM reports WHERE id='%s' " % (id))
-                        result = cursor.fetchone()
-
-                          
-                        cursor.close()
-                        db.close()
+                cursor = db.cursor()
+                cursor.execute("SELECT * FROM reports WHERE id='%s' " % (id))
+                result = cursor.fetchone()
+                cursor.close()
+                db.close()
             except Exception as e:
-                        print("Database operation failed.", e)
-                
-                    
-            output += str(json.dumps(arr))        
-
-
+                print("Database operation failed.", e)
+            output += str(json.dumps(arr))
+            
         elif method == "GET" and request == "/rename":
             if with_args == True:
                 arr_args = args.split('&')
