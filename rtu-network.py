@@ -420,64 +420,33 @@ class WebServer:
                     
             output += str(json.dumps([active_ip,inactive_ip,last_reports]))
 
-
-        elif method == "GET" and request == "/date":
+        elif method == "GET" and request == "/keyword":
             if with_args == True:
                 arr_args = args.split('&')
-
-                # Get new plname and devicename
-                startD = arr_args[0].split('=')[1]
-                toD = arr_args[1].split('=')[1]
-                startD = startD.replace("%20"," ");
-                toD = toD.replace("%20"," ");
-
-            arr = []
-            threading.Thread(target=self.get_lastitem).start()
-            try:
-                # Get latest log from db
-                db = mysql.connect(**dbconfig)
-            except:
-                print("GET_LATEST_LOG: No database connection. Teminating...")
-                os._exit(0)
-                time.sleep(2)
-            try:
-                cursor = db.cursor()
-                cursor.execute("SELECT * FROM reports WHERE  datetime>'%s' and datetime<'%s' and status='3' ORDER BY ID DESC" % (startD,toD))
-                result = cursor.fetchall()
-                print(startD)
-                for itm in result:
-                    arr.append({"rid":itm[1],"mid":itm[2]})
+                word = arr_args[0].split('=')[1]
+                try:
+                    db = mysql.connect(**dbconfig)
+                except:
+                    print("GET_KEYWORD: No database connection. Teminating...")
+                    os._exit(0)
+                    time.sleep(2)
+                try:
+                    cursor = db.cursor()
+                    result = []
+                    if word!="":
+                        cursor.execute("SELECT * FROM tbl_events WHERE eventid LIKE '%s' AND remarks LIKE 'CLOSED' ORDER BY ID DESC LIMIT 10" % ('%'+word+'%'))
+                        result = cursor.fetchall()
+                    output += str(json.dumps(list(result)))
+                except:
+                    print("Database operation failed.")
+                try:
                     cursor.close()
                     db.close()
-            except Exception as e:
-                print("Database operation failed.", e)
-            output += str(json.dumps(arr))
-
-        elif method == "GET" and request == "/summary":
-            if with_args == True:
-                arr_args = args.split('&')
-
-                # Get new plname and devicename
-                id = arr_args[0].split('=')[1]
-                #toD = arr_args[1].split('=')[1]
-            arr = []
-            threading.Thread(target=self.get_lastitem).start()
-            try:
-                # Get latest log from db
-                db = mysql.connect(**dbconfig)
-            except:
-                print("GET_LATEST_LOG: No database connection. Teminating...")
-                os._exit(0)
-                time.sleep(2)
-            try:
-                cursor = db.cursor()
-                cursor.execute("SELECT * FROM reports WHERE id='%s' " % (id))
-                result = cursor.fetchone()
-                cursor.close()
-                db.close()
-            except Exception as e:
-                print("Database operation failed.", e)
-            output += str(json.dumps(arr))
+                except:
+                    pass
+            else:
+                output = self.get_header(404).encode()
+                output += "404 Page not found."
             
         elif method == "GET" and request == "/rename":
             if with_args == True:
