@@ -4,10 +4,13 @@
 --
 -- Host: 127.0.0.1
 <<<<<<< HEAD
+<<<<<<< HEAD
 -- Generation Time: Aug 30, 2018 at 09:19 AM
 -- Server version: 10.1.34-MariaDB
 -- PHP Version: 5.6.37
 =======
+=======
+>>>>>>> parent of f25951b... Updated
 -- Generation Time: Aug 29, 2018 at 05:43 AM
 -- Server version: 10.1.32-MariaDB
 -- PHP Version: 7.2.5
@@ -49,6 +52,7 @@ CREATE TABLE `reports` (
 
 INSERT INTO `reports` (`id`, `devicename`, `ip`, `macaddress`, `status`, `datetime`) VALUES
 <<<<<<< HEAD
+<<<<<<< HEAD
 (11, 'pl01', '192.168.1.101', '94:b3:9f:fc:0f:c7', '1', '2018-08-30 15:01:36'),
 (12, 'pl01', '192.168.1.101', '94:b3:9f:fc:0f:c7', '4', '2018-08-30 15:01:59'),
 (13, 'pl01', '192.168.1.101', '94:b3:9f:fc:0f:c7', '3', '2018-08-30 15:02:41'),
@@ -82,6 +86,8 @@ CREATE TABLE `tbl_events` (
 INSERT INTO `tbl_events` (`id`, `eventid`, `devicename`, `macaddress`, `datetime`, `remarks`) VALUES
 (16, '94:b3:9f:fc:0f:c7', 'pl01', '94:b3:9f:fc:0f:c7', '2018-08-30 14:57:44pl01', '3');
 =======
+=======
+>>>>>>> parent of f25951b... Updated
 (1, 'pl01', '192.168.1.21', 'a8:1e:84:ab:89:ed', '2', '2018-08-29 01:42:28'),
 (2, 'pl01', '192.168.1.21', 'a8:1e:84:ab:89:ed', '3', '2018-08-29 01:42:30'),
 (3, 'pl01', '192.168.1.21', 'a8:1e:84:ab:89:ed', '4', '2018-08-29 01:42:32'),
@@ -102,6 +108,9 @@ INSERT INTO `tbl_events` (`id`, `eventid`, `devicename`, `macaddress`, `datetime
 (18, 'pl01', '192.168.1.21', 'a8:1e:84:ab:89:ed', '4', '2018-08-29 11:33:32'),
 (19, 'pl01', '192.168.1.21', 'a8:1e:84:ab:89:ed', '2', '2018-08-29 11:33:38'),
 (20, 'pl01', '169.254.228.219', 'a8:1e:84:ab:89:ed', '2', '2018-08-29 11:41:37');
+<<<<<<< HEAD
+>>>>>>> parent of f25951b... Updated
+=======
 >>>>>>> parent of f25951b... Updated
 
 -- --------------------------------------------------------
@@ -142,12 +151,15 @@ ALTER TABLE `tbl_plnames`
 ALTER TABLE `reports`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 --
 -- AUTO_INCREMENT for table `tbl_events`
 --
 ALTER TABLE `tbl_events`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+=======
+>>>>>>> parent of f25951b... Updated
 =======
 >>>>>>> parent of f25951b... Updated
 
