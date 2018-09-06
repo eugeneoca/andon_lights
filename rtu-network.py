@@ -240,7 +240,7 @@ class Client:
                 except:
                     curr_state = "GREEN"
                     if self.nofile==False:
-                        print("\nStatus file does not exist.")
+                        print("\n Local Status file does not exist.")
                         self.nofile=True
                 self.dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
