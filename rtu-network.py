@@ -233,11 +233,11 @@ class Client:
             # 4 == WHITE    Responded
             try:
                 # my local
-                light_status = open('status.db', 'r')
+                #light_status = open('status.db', 'r')
                 self.dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
                 # RTU
-                #light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
+                light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
                 # END RTU
 
                 curr_state = light_status.read().strip()
