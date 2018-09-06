@@ -234,21 +234,32 @@ class Client:
             # 4 == WHITE    Responded
             try:
                 # my local
-                #light_status = open('status.db', 'r')
+                try:
+                    light_status = open('status.db', 'r')
+                    curr_state = light_status.read().strip()
+                except:
+                    curr_state = "GREEN"
+                    if self.nofile==False:
+                        print("\nStatus file does not exist.")
+                        self.nofile=True
                 self.dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
                 # RTU
 
                 try:
                     light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
+                    curr_state = light_status.read().strip()
                 except:
+                    curr_state = "GREEN"
                     if self.nofile==False:
                         print("Status file does not exist.")
                         self.nofile=True
                 # END RTU
 
-                curr_state = light_status.read().strip()
-                light_status.close()
+                try:
+                    light_status.close()
+                except:
+                    pass
                 changed_state = curr_state!=prev_state
                 if changed_state and curr_state!="":
                     # State has been changed
