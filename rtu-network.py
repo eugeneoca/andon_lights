@@ -221,10 +221,10 @@ class Client:
                     print("Connection lost.")
                     self.sock.close()
                     break
-
     def begin_transmission(self, address, port):
         status = "GREEN"
         prev_state = "GREEN"
+        self.nofile = False
         while True:
             # Check status considering the conditions/rules.
             # 1 == RED      Equipment Downtime
@@ -233,11 +233,17 @@ class Client:
             # 4 == WHITE    Responded
             try:
                 # my local
-                light_status = open('status.db', 'r')
+                #light_status = open('status.db', 'r')
                 self.dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
                 # RTU
-                #light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
+
+                try:
+                    light_status = open('/var/txtalert/andon_lights/status.txt', 'r')
+                except:
+                    if self.nofile==False:
+                        print("Status file does not exist.")
+                        self.nofile=True
                 # END RTU
 
                 curr_state = light_status.read().strip()
