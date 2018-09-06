@@ -7,13 +7,79 @@
 
 		<!-- Bootstrap CSS -->
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
 		<script type="text/javascript">
+			function view_summary(reference){
+				// Reference :: Issue ID
+				$("#mainModalLabel").html(reference)
+				// Report request
+				if(reference!="" || reference!=undefined){
+					var request = new XMLHttpRequest();
+					request.open('GET', '/getsummary?reference='+reference, true);
+					request.onload = function() {
+				  	if (request.status >= 200 && request.status < 400) {
+					    // Success!
+					    data = eval(request.responseText)
+					    //alert(data)
+					  } else {
+
+					  }
+					};
+
+					request.onerror = function() {
+					  // There was a connection error of some sort
+					};
+
+					request.send();
+				}
+			}
+
 			function search(){
 				var keyword = $("#keyword").val()
 				if(keyword!=""){
 					var request = new XMLHttpRequest();
 					request.open('GET', '/keyword?word='+keyword, true);
+					request.onload = function() {
+					  if (request.status >= 200 && request.status < 400) {
+					    // Success!
+					    data = eval(request.responseText)
+					    if(data=="" || data==undefined){
+					    	$("#data-wrapper").html('Data not found.')
+					    }else{
+					    	$("#data-wrapper").val('')
+					    	src=''
+					    	for (var i = 0; i < data.length; i++) {
+					    		src += '<tr><th scope="row">'+data[i][1]+'</th><td>'+data[i][2].toUpperCase()+'</td><td>'+data[i][3].toUpperCase()+'</td><td>'+data[i][4]+'</td><td>Resolved, Not Encoded</td><td><button class=" btn btn-success" id="'+data[i][1]+'" onclick="view_summary(this.id)" data-toggle="modal" data-target="#mainModal">Encode</button></td></tr>'
+					    		$("#data-wrapper").html(src)
+					    	}
+					    }
+					  } else {
+
+					  }
+					};
+
+					request.onerror = function() {
+					  // There was a connection error of some sort
+					};
+
+					request.send();
+				}
+			}
+			start_date = ""
+			end_date = ""
+			function searchdate(){
+				start_date = $("#searchstartdate").val()
+				end_date = $("#searchenddate").val()
+				//start_date.split('-').join('')
+				if(start_date==""){
+					// Show error message
+					$("#error_handler").html('<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Warning!</strong> The start date should be set before setting the end date.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+				}else if(start_date==end_date){
+					$("#error_handler").html('<div class="alert alert-warning alert-dismissible fade show" role="alert"><strong>Warning!</strong> Start and End date cannot be the same.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+				}else{
+					// Do Search
+					$("#error_handler").html('')
+					var request = new XMLHttpRequest();
+					request.open('GET', '/datesearch?start='+start_date+'&end='+end_date, true);
 					request.onload = function() {
 					  if (request.status >= 200 && request.status < 400) {
 					    // Success!
@@ -24,8 +90,7 @@
 					    	$("#data-wrapper").val('')
 					    	src=''
 					    	for (var i = 0; i < data.length; i++) {
-					    		src += '<tr><th scope="row">'+data[i][1]+'</th><td>'+data[i][2].toUpperCase()+'</td><td>'+data[i][3].toUpperCase()+'</td><td>'+data[i][4]+'</td></tr>'
-					    		console.log(src)
+					    		src += '<tr><th scope="row">'+data[i][1]+'</th><td>'+data[i][2].toUpperCase()+'</td><td>'+data[i][3].toUpperCase()+'</td><td>'+data[i][4]+'</td><td>Resolved, Not Encoded</td><td><button class=" btn btn-success"  id="'+data[i][1]+'"  onclick="view_summary(this.id)" data-toggle="modal" data-target="#mainModal">Encode</button></td></tr>'
 					    		$("#data-wrapper").html(src)
 					    	}
 					    }
@@ -50,6 +115,7 @@
 		<div class="container">
 			<h1>EATON <small class="text-muted">ANDON LIGHTS NETWORK</small></h1>
 			<hr/>
+			<div id="error_handler"></div>
 			<div class="row">
 				<div class="col-sm-4">
 					<div class="input-group mb-3">
@@ -64,7 +130,7 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text" id="search" onchange="search">Start Date</span>
 						</div>
-						<input type="date" class="form-control input-lg" placeholder="Start Date"  onkeypress="search(this)" ="search" aria-label="Search" aria-describedby="search()">
+						<input type="date" class="form-control input-lg" placeholder="Start Date" id="searchstartdate" aria-label="Search" aria-describedby="search()">
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -72,7 +138,7 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text" id="search">End Date</span>
 						</div>
-						<input type="date" class="form-control" placeholder="End Date" aria-label="Search" id="datepicker" aria-describedby="search">
+						<input type="date" class="form-control" placeholder="End Date" id="searchenddate" onchange="searchdate(this)" aria-label="Search" id="datepicker" aria-describedby="search">
 					</div>
 				</div>
 			</div>
@@ -84,12 +150,70 @@
 						<th scope="col">Device Name</th>
 						<th scope="col">Mac Address</th>
 						<th scope="col">Date Resolved</th>
+						<th scope="col">Status</th>
+						<th scope="col">Action</th>
 					</tr>
 				</thead>
 				<tbody id="data-wrapper">
-					
 				</tbody>
 			</table>
+
+			<!-- Modal -->
+			<div class="modal fade" id="mainModal" tabindex="-1" role="dialog" aria-labelledby="mainModalLabel" aria-hidden="true">
+			  <div class="modal-dialog modal-md" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="mainModalLabel">No Data</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			        <table class="table table-hover">
+						<tbody id="data-wrapper">
+							<tr>
+								<th scope="row">Issue ID</th>
+								<td id="report_issueid">PL01-20180905103312</td>
+							</tr>
+							<tr>
+								<th scope="row">Machine Name</th>
+								<td id="report_devicename">UV CELL 2</td>
+							</tr>
+							<tr>
+								<th scope="row">Start of downtime</th>
+								<td id="report_start">2018-09-05 10:33:18</td>
+							</tr>
+							<tr>
+								<th scope="row">Time Responded</th>
+								<td id="report_responsetime">2018-09-05 10:33:18</td>
+							</tr>
+							<tr>
+								<th scope="row">Time Repaired</th>
+								<td id="report_repairtime">2018-09-05 10:33:18</td>
+							</tr>
+							<tr>
+								<th scope="row">Total Downtime</th>
+								<td id="report_downtime">2018-09-05 10:33:18</td>
+							</tr>
+							<tr>
+								<th scope="row">Personel</th>
+								<td><input type="email" class="form-control" placeholder="Personnel Responded"></td>
+							</tr>
+							<tr>
+								<th scope="row">Description</th>
+								<td><textarea class="form-control" rows="3"></textarea></td>
+							</tr>
+						</tbody>
+					</table>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-primary">Save changes</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+
 		</div>
 
 		<!-- Optional JavaScript -->

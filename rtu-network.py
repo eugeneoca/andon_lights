@@ -404,10 +404,14 @@ class WebServer:
                         time.sleep(2)
                     try:
                         cursor = db.cursor()
-                        cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item))
-                        result = cursor.fetchone()
-                        cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (result[1]))
-                        name = cursor.fetchone()
+                        try:
+                            cursor.execute("SELECT * FROM reports WHERE ip = '%s' ORDER BY ID DESC LIMIT 1" % (ip_item))
+                            result = cursor.fetchone()
+                            cursor.execute("SELECT * FROM tbl_plnames WHERE devicename LIKE '%s' ORDER BY ID DESC LIMIT 1" % (result[1]))
+                            name = cursor.fetchone()
+                        except Exception as e:
+                            # No Data Found
+                            pass
                         if name:
                             result = list(result)
                             result[3] = name[2]
@@ -415,12 +419,13 @@ class WebServer:
                         cursor.close()
                         db.close()
                     except Exception as e:
-                        print("Database operation failed.", e)
+                        print("Database operation failed.")
                 
                     
             output += str(json.dumps([active_ip,inactive_ip,last_reports]))
 
         elif method == "GET" and request == "/keyword":
+            # Keyword Search
             if with_args == True:
                 arr_args = args.split('&')
                 word = arr_args[0].split('=')[1]
@@ -432,11 +437,96 @@ class WebServer:
                     time.sleep(2)
                 try:
                     cursor = db.cursor()
+                    result_arr = []
                     result = []
                     if word!="":
-                        cursor.execute("SELECT * FROM tbl_events WHERE eventid LIKE '%s' AND remarks LIKE 'CLOSED' ORDER BY ID DESC LIMIT 10" % ('%'+word+'%'))
-                        result = cursor.fetchall()
-                    output += str(json.dumps(list(result)))
+                        cursor.execute("SELECT * FROM tbl_events WHERE eventid LIKE '%s' AND remarks LIKE 'CLOSED' ORDER BY ID DESC" % ('%'+word+'%'))
+                        result = list(cursor.fetchall())
+                        for item in result:
+                            item = list(item)
+                            try:
+                                item[4] = str(item[4])
+                            except Exception as e:
+                                print(e)
+                            result_arr.append(item)
+
+                        result = result_arr
+                    output += str(json.dumps(result))
+                except:
+                    print("Database operation failed.")
+                try:
+                    cursor.close()
+                    db.close()
+                except:
+                    pass
+            else:
+                output = self.get_header(404).encode()
+                output += "404 Page not found."
+
+        elif method == "GET" and request == "/getsummary":
+            # Get all info about summary
+            if with_args == True:
+                arr_args = args.split('&')
+                reference = arr_args[0].split('=')[1]
+                try:
+                    db = mysql.connect(**dbconfig)
+                except:
+                    print("GET_KEYWORD: No database connection. Teminating...")
+                    os._exit(0)
+                    time.sleep(2)
+                try:
+                    cursor = db.cursor()
+                    result_arr = []
+                    result = []
+                    if reference!="":
+                        cursor.execute("SELECT * FROM tbl_events WHERE eventid LIKE '%s'" % (reference))
+                        result = list(cursor.fetchall())
+                        for item in result:
+                            item = list(item)
+                            item[4] = str(item[4])
+                            result_arr.append(item)
+                        #result_arr.append()
+                        # Add the total down time at the end of array
+                except:
+                    print("Database operation failed.")
+                try:
+                    cursor.close()
+                    db.close()
+                except:
+                    pass
+            else:
+                output = self.get_header(404).encode()
+                output += "404 Page not found."
+
+        elif method == "GET" and request == "/datesearch":
+            # Date Search
+            if with_args == True:
+                arr_args = args.split('&')
+                start_date = arr_args[0].split('=')[1]
+                end_date = arr_args[1].split('=')[1]
+                try:
+                    db = mysql.connect(**dbconfig)
+                except:
+                    print("GET_KEYWORD: No database connection. Teminating...")
+                    os._exit(0)
+                    time.sleep(2)
+                try:
+                    cursor = db.cursor()
+                    result_arr = []
+                    result = []
+                    if start_date!="" and end_date!="":
+                        cursor.execute("SELECT * FROM tbl_events WHERE datetime BETWEEN '%s' AND '%s' AND remarks LIKE 'CLOSED' ORDER BY ID DESC LIMIT 10" % (start_date, end_date))
+                        result = list(cursor.fetchall())
+                        for item in result:
+                            item = list(item)
+                            try:
+                                item[4] = str(item[4])
+                            except Exception as e:
+                                print(e)
+                            result_arr.append(item)
+
+                        result = result_arr
+                    output += str(json.dumps(result))
                 except:
                     print("Database operation failed.")
                 try:
