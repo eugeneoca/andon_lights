@@ -225,6 +225,7 @@ class Client:
         status = "GREEN"
         prev_state = "GREEN"
         self.nofile = False
+        light_status = ""
         while True:
             # Check status considering the conditions/rules.
             # 1 == RED      Equipment Downtime
