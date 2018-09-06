@@ -1,0 +1,11 @@
+1. Install python mysql-connector.
+Command: pip install mysql-connector
+2. If pip is not yet installed.
+Command: apt install python-pip
+3. Install Lamp (Apache, Mysql server).
+4. Create database "eaton".
+5. Import eaton.sql to the eaton database.
+6. To run server.
+Command: python rtu-network.py
+7. Run some client.
+8. Access localhost:81 or <Server IP Address>:81 using web browser to see the user interface.
