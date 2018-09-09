@@ -235,14 +235,14 @@ class Client:
             # 4 == WHITE    Responded
             try:
                 # my local
-                try:
+                """try:
                     light_status = open('status.db', 'r')
                     curr_state = light_status.read().strip()
                 except:
                     curr_state = "GREEN"
                     if self.nofile==False:
                         print("\n Local Status file does not exist.")
-                        self.nofile=True
+                        self.nofile=True"""
                 self.dt = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
 
                 # RTU
