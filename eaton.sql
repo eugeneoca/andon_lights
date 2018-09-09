@@ -3,11 +3,10 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 08, 2018 at 05:22 PM
+-- Generation Time: Sep 09, 2018 at 03:49 PM
 -- Server version: 10.1.32-MariaDB
 -- PHP Version: 7.2.5
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -35,7 +34,7 @@ CREATE TABLE `reports` (
   `macaddress` varchar(100) NOT NULL,
   `status` varchar(10) NOT NULL,
   `datetime` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ;
 
 -- --------------------------------------------------------
 
@@ -50,7 +49,7 @@ CREATE TABLE `tbl_events` (
   `macaddress` varchar(200) NOT NULL,
   `datetime` datetime(6) NOT NULL,
   `remarks` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ;
 
 -- --------------------------------------------------------
 
@@ -62,7 +61,7 @@ CREATE TABLE `tbl_plnames` (
   `id` int(100) NOT NULL,
   `devicename` varchar(200) NOT NULL,
   `plname` varchar(200) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ;
 
 --
 -- Indexes for dumped tables
