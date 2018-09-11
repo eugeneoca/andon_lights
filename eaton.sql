@@ -48,7 +48,7 @@ CREATE TABLE `tbl_events` (
   `eventid` varchar(200) NOT NULL,
   `devicename` varchar(200) NOT NULL,
   `macaddress` varchar(200) NOT NULL,
-  `datetime` datetime(6) NOT NULL,
+  `datetime` varchar(6) NOT NULL,
   `remarks` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
